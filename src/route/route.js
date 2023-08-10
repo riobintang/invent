@@ -6,9 +6,9 @@ const checkAdmin = require('../middleware/authAdmin');
 const router = express.Router();
 
 
-router.get('/users/all', authToken, checkAdmin ,handlerGetAllUser);
+router.get('/users/all', checkAdmin ,handlerGetAllUser);
 
-router.post('/users/add', authToken, checkAdmin, handlerAddUser);
-router.post('/users/reset/:uuid', authToken, checkAdmin, handlerResetPassword);
+router.post('/users/add', checkAdmin, handlerAddUser);
+router.post('/users/reset/:uuid', checkAdmin, handlerResetPassword);
 
 module.exports = router;
