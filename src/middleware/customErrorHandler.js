@@ -13,8 +13,9 @@ function customErrorHandler(err, req, res, next) {
     console.log(`JSON Error: ${err.message}`);
   } else if (err instanceof ReferenceError) {
     console.log(err.message);
+    console.log(err.stack);
   } else {
-    console.log(err.message)
+    console.log(err.message);
     console.log(err.stack);
   }
 

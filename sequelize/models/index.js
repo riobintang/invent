@@ -64,13 +64,13 @@ sequelize.models.User.belongsTo(sequelize.models.Department, {
   foreignKey: "id_department",
   sourceKey: "id",
 });
-// Inventory and AddedItem
-sequelize.models.Inventory.belongsTo(sequelize.models.AddedItem, {
+// Inventory and Added_item
+sequelize.models.Inventory.belongsTo(sequelize.models.Added_item, {
   foreignKey: "id_added_item",
   sourceKey: "id",
 });
 // Inventory and NameItem
-sequelize.models.AddedItem.hasMany(sequelize.models.Inventory, {
+sequelize.models.Added_item.hasMany(sequelize.models.Inventory, {
   foreignKey: "id_name_item",
   targetKey: "id",
 });

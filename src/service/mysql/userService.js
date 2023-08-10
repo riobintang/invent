@@ -1,8 +1,12 @@
-const { User, Role, Department } = require("../../../sequelize/models");
 const { Op } = require("sequelize");
+const randomstring = require("randomstring");
+
+const { User, Role, Department } = require("../../../sequelize/models");
 const { ResponseError } = require("../../util/responseError");
 const bcrypt = require("bcrypt");
 const generateJWT = require("../../util/generateJWT");
+const generatePassword = require("../../util/generatePassword");
+
 module.exports = {
   userServices: {
     getUserById: async (id) => {
@@ -43,5 +47,63 @@ module.exports = {
 
       return token;
     },
+    resetPasswordUser: async (uuid) => {
+      const findUser = await User.findOne({
+        where: {
+          uuid
+        }
+      });
+
+      if (!findUser) {
+        throw new ResponseError(400, "User not found");
+      }
+
+      const password = await generatePassword();
+      await findUser.update({
+        password: password.hashPassword
+      });
+
+      return {
+        password: password.password,
+      }
+      
+    },
+    addUser: async (name, username, id_department) => {
+      const findUser = await User.count({
+        where: {
+          username,
+        },
+      });
+
+      if (findUser >= 1) {
+        throw new ResponseError(400, "Username has been used");
+      }
+
+      const password = await generatePassword();
+      
+      await User.create({
+        username: username,
+        name: name,
+        id_department: id_department,
+        password: password.hashPassword,
+      });
+
+      return {
+        username: username,
+        password: password.password,
+      };
+    },
+    getAllUser: async () => {
+      const user = await User.findAll({
+        where: {
+          id_role: {
+            [Op.ne]: 1,
+          }
+        },
+        attributes: {exclude: ['password', 'id']}
+      });
+
+      return user;
+    }
   },
 };
