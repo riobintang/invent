@@ -16,14 +16,20 @@ module.exports = {
       {
         code: "0100",
         name: "KS",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
         code: '0200',
         name: 'WKS 2',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
         code: '0300',
         name: 'WKS 3',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
 
     ]);
