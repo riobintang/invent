@@ -1,3 +1,5 @@
+const { Sequelize } = require(".");
+
 function createModelAddedItem(sequelize, DataTypes) {
   const Added_item = sequelize.define("Added_item", {
     id: {
@@ -22,6 +24,26 @@ function createModelAddedItem(sequelize, DataTypes) {
     year: {
       type: DataTypes.STRING(4),
       allowNull: false,
+    },
+    id_name_item: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'nameItems',
+        key: 'id',
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
+    id_work_unit: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      referense: {
+        model: 'work_units',
+        key: 'id',
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     },
     createdAt: {
       type: DataTypes.DATE,

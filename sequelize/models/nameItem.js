@@ -15,9 +15,15 @@ function createModelNameItem(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    id_types: {
+    id_type: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      referense: {
+        model: "types",
+        key: 'id',
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     },
     createdAt: {
       type: DataTypes.DATE,

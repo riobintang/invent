@@ -48,26 +48,6 @@ function createModelInventory(sequelize, DataTypes) {
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    id_work_unit: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "work_units",
-        key: "id",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
-    },
-    id_type: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "types",
-        key: "id",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
-    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -7,17 +7,17 @@ module.exports = {
       "conditionItems",
       [
         {
-         id: 1,
-         name: "Baik",
-         createdAt: new Date(),
-         updatedAt: new Date(),
+          id: 1,
+          name: "Baik",
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
         {
           id: 2,
           name: "Buruk",
           createdAt: new Date(),
           updatedAt: new Date(),
-        }
+        },
       ],
       {}
     );

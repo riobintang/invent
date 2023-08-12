@@ -3,51 +3,36 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("inventories", {
+    await queryInterface.createTable("added_items", {
       id: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
       },
-      codeInvent: {
+      code: {
         type: Sequelize.STRING,
+        allowNull: false,
+        // unique: true,
+      },
+      quantity: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       specification: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      quantity: {
-        type: Sequelize.INTEGER,
+      year: {
+        type: Sequelize.STRING(4),
         allowNull: false,
-      },
-      id_added_item: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "added_items",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       id_name_item: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "nameItems",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_department: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "departments",
-          key: "id",
+          model: 'nameItems',
+          key: 'id',
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -55,18 +40,8 @@ module.exports = {
       id_work_unit: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: "work_units",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_type: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'types',
+        referense: {
+          model: 'work_units',
           key: 'id',
         },
         onUpdate: "CASCADE",
@@ -84,6 +59,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("inventories");
+    await queryInterface.dropTable("added_items");
   },
 };
