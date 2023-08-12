@@ -18,7 +18,13 @@ function customErrorHandler(err, req, res, next) {
     console.log(err.message);
     console.log(err.stack);
   }
-
+  if (process.env.NODE_ENV == "development") {
+    return res.status(500).json({
+      status: "fail",
+      message: "Error Internal Server",
+      error: err.message,
+    });
+  }
   return res.status(500).json({
     status: "fail",
     message: "Error Internal Server",
