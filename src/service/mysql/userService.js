@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const randomstring = require("randomstring");
 
 const { User, Role, Department } = require("../../../sequelize/models");
-const { ResponseError } = require("../../util/responseError");
+const ResponseError  = require("../../util/responseError");
 const bcrypt = require("bcrypt");
 const generateJWT = require("../../util/generateJWT");
 const generatePassword = require("../../util/generatePassword");

@@ -1,6 +1,5 @@
 const express = require('express');
 const { handlerAddUser, handlerGetAllUser, handlerResetPassword } = require('../app/user/handler');
-const authToken = require('../middleware/authToken');
 const checkAdmin = require('../middleware/authAdmin');
 
 const router = express.Router();

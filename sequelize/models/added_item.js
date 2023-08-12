@@ -1,5 +1,3 @@
-const { Sequelize } = require(".");
-
 function createModelAddedItem(sequelize, DataTypes) {
   const Added_item = sequelize.define("Added_item", {
     id: {
