@@ -23,6 +23,7 @@ function customErrorHandler(err, req, res, next) {
       status: "fail",
       message: "Error Internal Server",
       error: err.message,
+      stack: err.stack,
     });
   }
   return res.status(500).json({
