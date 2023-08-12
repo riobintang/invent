@@ -17,8 +17,8 @@ module.exports = {
       id: 1,
       name: "admin utama",
       value: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       id: 2,

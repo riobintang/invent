@@ -23,6 +23,8 @@ module.exports = {
       password: await bcrypt.hash('12345678', 10),
       id_role: 1,
       id_department: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }
    ]);
   },
