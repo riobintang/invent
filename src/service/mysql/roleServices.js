@@ -1,4 +1,5 @@
 const { Role } = require("../../../sequelize/models");
+const ResponseError = require("../../util/responseError");
 
 module.exports = {
     roleServices: {
@@ -9,7 +10,7 @@ module.exports = {
         getRoleById: async (id) => {
             const role = await Role.findByPk(id);
             if (!role) {
-                throw new Error(400, "Role not found");
+                throw new ResponseError(400, "Role not found");
             }
             return role;
         }
