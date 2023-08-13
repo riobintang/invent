@@ -45,7 +45,7 @@ module.exports = {
 
       const token = generateJWT((uuid = user.uuid), (value = user.Role.value));
 
-      return token;
+      return {token, userRole: user.Role.value == "1" ? 'admin': 'user'};
     },
     resetPasswordUser: async (uuid) => {
       const findUser = await User.findOne({
@@ -68,7 +68,7 @@ module.exports = {
       }
       
     },
-    addUser: async (name, username, id_department) => {
+    addUser: async (username, id_department) => {
       const findUser = await User.count({
         where: {
           username,
@@ -83,7 +83,6 @@ module.exports = {
       
       await User.create({
         username: username,
-        name: name,
         id_department: id_department,
         password: password.hashPassword,
       });

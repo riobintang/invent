@@ -18,7 +18,6 @@ module.exports = {
     {
       id: 1,
       uuid: uuidv4(),
-      name: "zaidan noor",
       username: "adminJurusan",
       password: await bcrypt.hash('12345678', 10),
       id_role: 1,

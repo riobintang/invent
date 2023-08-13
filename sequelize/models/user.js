@@ -12,10 +12,6 @@ function createModelUser(sequelize, DataTypes) {
 
       allowNull: false,
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     username: {
       type: DataTypes.STRING,
       unique: true,

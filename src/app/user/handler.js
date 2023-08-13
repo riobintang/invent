@@ -15,7 +15,8 @@ module.exports = {
         status: "success",
         message: "successfully Login",
         data: {
-          accessToken: user,
+          accessToken: user.token,
+          user: user.userRole,
         },
       });
     } catch (error) {
@@ -26,7 +27,6 @@ module.exports = {
     try {
       const dataUser = validation(addUserSchema, req.body);
       const addedUser = await userServices.addUser(
-        dataUser.name,
         dataUser.username,
         dataUser.id_department
       );
