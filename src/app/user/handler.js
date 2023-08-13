@@ -1,4 +1,4 @@
-const { userServices } = require("../../service/mysql/userService");
+const userServices = require("../../service/mysql/userService");
 
 const {
   loginUserSchema,

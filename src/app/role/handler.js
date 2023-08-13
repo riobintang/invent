@@ -1,4 +1,4 @@
-const { roleServices } = require("../../service/mysql/roleServices");
+const roleServices = require("../../service/mysql/roleServices");
 
 module.exports = {
   handlerGetRoles: async (req, res, next) => {

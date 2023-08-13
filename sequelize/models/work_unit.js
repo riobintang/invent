@@ -17,6 +17,10 @@ function createModelWorkUnit(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      description: { 
+        type: DataTypes.TEXT('long'),
+        allowNull: true,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
