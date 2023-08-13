@@ -17,6 +17,7 @@ module.exports = {
         data: {
           accessToken: user.token,
           user: user.userRole,
+          department: user.userDepartment,
         },
       });
     } catch (error) {
@@ -31,7 +32,7 @@ module.exports = {
         dataUser.id_department
       );
 
-      res.status(200).json({
+      res.status(201).json({
         status: "success",
         message: "successfully add User",
         data: {

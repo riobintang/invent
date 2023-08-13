@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const randomstring = require("randomstring");
 
 const { User, Role, Department } = require("../../../sequelize/models");
-const ResponseError  = require("../../util/responseError");
+const ResponseError = require("../../util/responseError");
 const bcrypt = require("bcrypt");
 const generateJWT = require("../../util/generateJWT");
 const generatePassword = require("../../util/generatePassword");
@@ -29,7 +29,7 @@ module.exports = {
         where: {
           username: requestData.username,
         },
-        include: [{ model: Role }],
+        include: [{ model: Role }, { model: Department }],
       });
       if (!user) {
         throw new ResponseError(401, "Username/Email or Password wrong");
@@ -45,13 +45,17 @@ module.exports = {
 
       const token = generateJWT((uuid = user.uuid), (value = user.Role.value));
 
-      return {token, userRole: user.Role.value == "1" ? 'admin': 'user'};
+      return {
+        token: token,
+        userRole: user.Role.value == "1" ? "admin" : "user",
+        userDepartment: user.Department.name,
+      };
     },
     resetPasswordUser: async (uuid) => {
       const findUser = await User.findOne({
         where: {
-          uuid
-        }
+          uuid,
+        },
       });
 
       if (!findUser) {
@@ -60,13 +64,12 @@ module.exports = {
 
       const password = await generatePassword();
       await findUser.update({
-        password: password.hashPassword
+        password: password.hashPassword,
       });
 
       return {
         password: password.password,
-      }
-      
+      };
     },
     addUser: async (username, id_department) => {
       const findUser = await User.count({
@@ -80,7 +83,7 @@ module.exports = {
       }
 
       const password = await generatePassword();
-      
+
       await User.create({
         username: username,
         id_department: id_department,
@@ -97,12 +100,12 @@ module.exports = {
         where: {
           id_role: {
             [Op.ne]: 1,
-          }
+          },
         },
-        attributes: {exclude: ['password', 'id']}
+        attributes: { exclude: ["password", "id"] },
       });
 
       return user;
-    }
+    },
   },
 };
