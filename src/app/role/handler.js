@@ -4,7 +4,7 @@ module.exports = {
   handlerGetRoles: async (req, res, next) => {
     try {
       const roles = await roleServices.getRoles();
-      
+
       res.status(200).json({
         status: "success",
         message: "successfully get Roles",
@@ -15,16 +15,16 @@ module.exports = {
     }
   },
   handlerGetRoleById: async (req, res, next) => {
-    try{ 
-      const id = req.params;
+    try {
+      const { id } = req.params;
       const role = await roleServices.getRoleById(id);
       res.status(200).json({
-        status: 'success',
-        message: 'successfully get Role',
+        status: "success",
+        message: "successfully get Role",
         data: role,
-      })
+      });
     } catch (error) {
       next(error);
     }
-  }
+  },
 };

@@ -47,24 +47,24 @@ module.exports = {
     try {
       const user = await userServices.getAllUser();
       res.status(200).json({
-        status: 'success',
-        message: 'successfully get all User',
+        status: "success",
+        message: "successfully get all User",
         data: user,
-      })
+      });
     } catch (error) {
       next(error);
     }
   },
   handlerResetPassword: async (req, res, next) => {
     try {
-      const uuid = req.params;
+      const { uuid } = req.params;
       const user = await userServices.resetPasswordUser(uuid);
       res.status(201).json({
-        status: 'success',
-        message: 'successfully reset password User',
+        status: "success",
+        message: "successfully reset password User",
         data: {
           password: user,
-        }
+        },
       });
     } catch (error) {
       next(error);

@@ -4,6 +4,9 @@ function authToken(req, res, next) {
     //console.log(req.headers)
     const authHeader = req.headers["authorization"];
     //console.log(authHeader)
+    if (!authHeader){
+        throw new ResponseError(401, "Login is required");
+    }
     const token = authHeader.split(" ")[1];
     if (!token) {
         throw new ResponseError(401, "Login is required");
