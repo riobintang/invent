@@ -14,16 +14,8 @@ const getTypeById = async (id) => {
 };
 
 const addType = async (code, name) => {
-  const checkType = await Type.count({
-    where: {
-      code: code,
-    },
-  });
-
-  if (checkType > 0) {
-    throw new ResponseError(401, "Code has been used");
-  }
-
+  await checkCodeIsExist(code, 1);
+  
   return await Type.create({
     code: code,
     name: name,
@@ -35,6 +27,8 @@ const updateType = async (id, code, name) => {
   if (!type) {
     throw new ResponseError(400, "Type item is not found");
   }
+
+  await checkCodeIsExist(code, 2);
 
   return await type.update({
     code: code,
@@ -53,6 +47,23 @@ const checkType = async (id) => {
     throw new ResponseError(400, "Type is not found");
   }
   return checkType;
+};
+
+// This function for checking "Code" is exist or not. 
+// Return error if "Code" has more than count parameter. 
+// Count parameter check how many "Code" are same in database
+// Count = 1 is for add, Count = 2 is for update
+const checkCodeIsExist = async (code, count = 1) => {
+  const checkCode = await Type.count({
+    where: {
+      code: code,
+    },
+  });
+
+  if (checkCode > count - 1) {
+    throw new ResponseError(401, "Code has been used");
+  }
+  return;
 };
 
 module.exports = {

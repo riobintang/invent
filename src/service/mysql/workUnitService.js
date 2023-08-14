@@ -2,7 +2,7 @@ const { Work_unit } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 
 module.exports = {
-  addWorkUnit: async (code, name, description) => {
+  addWorkUnit: async (code, name, description = "") => {
     const checkWorkUnit = await Work_unit.count({
       where: {
         code: code,

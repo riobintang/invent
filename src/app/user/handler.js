@@ -60,7 +60,7 @@ module.exports = {
     try {
       const { uuid } = req.params;
       const user = await userServices.resetPasswordUser(uuid);
-      res.status(201).json({
+      res.status(200).json({
         status: "success",
         message: "successfully reset password User",
         data: {
