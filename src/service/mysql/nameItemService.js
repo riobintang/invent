@@ -7,7 +7,11 @@ const getAllNameItem = async () => {
 };
 
 const getNameItemById = async (id) => {
-  const nameItem = await NameItem.findByPk(id);
+  const nameItem = await NameItem.findByPk(id, {
+    attributes: {
+      exclude: ["createdAt", "updatedAt"]
+    }
+  });
   if (!nameItem) {
     throw new ResponseError(400, "Name Type Item not found");
   }
@@ -25,6 +29,9 @@ const getNameItemByType = async (id_type) => {
         attributes: [],
       },
     ],
+    attributes: {
+      exclude: ["createdAt", "updatedAt"]
+    }
   });
 
   return nameItem;

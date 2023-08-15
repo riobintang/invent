@@ -1,12 +1,21 @@
+const { Op } = require("sequelize");
 const { Type } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 
 const getAllTypes = async () => {
-  return await Type.findAll();
+  return await Type.findAll({
+    attributes: {
+      exclude: ["createdAt", "updatedAt"]
+    }
+  });
 };
 
 const getTypeById = async (id) => {
-  const type = await Type.findByPk(id);
+  const type = await Type.findByPk(id, {
+    attributes: {
+      exclude: ["createdAt", "updatedAt"]
+    }
+  });
   if (!type) {
     throw new ResponseError(400, "Code Item not found");
   }
@@ -14,7 +23,7 @@ const getTypeById = async (id) => {
 };
 
 const addType = async (code, name) => {
-  await checkCodeIsExist(code, 1);
+  await checkCodeIsExist(code);
   
   return await Type.create({
     code: code,
@@ -28,7 +37,7 @@ const updateType = async (id, code, name) => {
     throw new ResponseError(400, "Type item is not found");
   }
 
-  await checkCodeIsExist(code, 2);
+  await checkCodeIsExist(code, id);
 
   return await type.update({
     code: code,
@@ -53,15 +62,18 @@ const checkType = async (id) => {
 // Return error if "Code" has more than count parameter. 
 // Count parameter check how many "Code" are same in database
 // Count = 1 is for add, Count = 2 is for update
-const checkCodeIsExist = async (code, count = 1) => {
+const checkCodeIsExist = async (code, id = null) => {
   const checkCode = await Type.count({
     where: {
       code: code,
+      id: {
+        [Op.ne]: id
+      }
     },
   });
 
-  if (checkCode > count - 1) {
-    throw new ResponseError(401, "Code has been used");
+  if (checkCode > 0) {
+    throw new ResponseError(400, "Code has been used");
   }
   return;
 };

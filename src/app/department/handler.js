@@ -1,4 +1,6 @@
 const departmentServices = require("../../service/mysql/departmentServices");
+const departmentSchema = require("../../validation/departmentSchema");
+const { validation } = require("../../validation/validate");
 
 module.exports = {
   handlerGetDepartments: async (req, res, next) => {
@@ -27,5 +29,29 @@ module.exports = {
       next(error);
     }
   },
-  handlerAddDepartment: async (req, res, next) => {},
+  handlerAddDepartment: async (req, res, next) => {
+    try {
+      const requestData = validation(departmentSchema, req.body);
+      await departmentServices.addDepartment(requestData.name);
+      res.status(201).json({
+        status: "success",
+        message: "successfully add Department",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerUpdateDepartment: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const requestData = validation(departmentSchema, req.body);
+      await departmentServices.updateDepartment(id, requestData.name);
+      res.status(200).json({
+        status: "success",
+        message: "successfully update Department",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

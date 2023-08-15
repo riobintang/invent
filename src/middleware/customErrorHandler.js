@@ -1,3 +1,4 @@
+const { ValidationError } = require("sequelize");
 const ResponseError = require("../util/responseError");
 
 function customErrorHandler(err, req, res, next) {
@@ -14,7 +15,10 @@ function customErrorHandler(err, req, res, next) {
   } else if (err instanceof ReferenceError) {
     console.log(err.message);
     console.log(err.stack);
-  } else {
+  } else if (err instanceof ValidationError){
+    console.log(err.message);
+    console.log(err.errors);
+  }else {
     console.log(err.message);
     console.log(err.stack);
   }

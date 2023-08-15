@@ -28,7 +28,7 @@ module.exports = {
       next(error);
     }
   },
-  handlertAddWorkUnit: async (req, res, next) => {
+  handlerAddWorkUnit: async (req, res, next) => {
     try {
       const requestData = validation(workUnitSchema, req.body);
       await workUnitService.addWorkUnit(
@@ -48,11 +48,12 @@ module.exports = {
     try {
       const { id } = req.params;
       const requestData = validation(workUnitSchema, req.body);
+      
       await workUnitService.updateWorkUnit(
         id,
-        requestData.code,
-        requestData.name,
-        requestData.description
+        code=requestData.code,
+        name = requestData.name,
+        description = requestData.description
       );
       res.status(200).json({
         status: "success",

@@ -101,7 +101,7 @@ module.exports = {
           [Op.ne]: 1,
         },
       },
-      attributes: { exclude: ["password", "id"] },
+      attributes: { exclude: ["password", "id", "createdAt", "updatedAt"] },
     });
 
     return user;
