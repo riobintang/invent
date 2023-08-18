@@ -9,6 +9,6 @@ router.get('/', authToken, checkAdmin, handlerGetAllUserWithoutAdmin);
 router.post('/login', handlerLogin);
 router.post('/add', authToken, checkAdmin, handlerAddUser);
 router.post('/changepassword', authToken, handlerChangePassword);
-router.post('reset/:uuid', authToken, checkAdmin, handlerResetPassword);
+router.post('/reset/:uuid', authToken, checkAdmin, handlerResetPassword);
 
 module.exports = router;

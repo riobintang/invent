@@ -69,9 +69,7 @@ module.exports = {
       password: password.hashPassword,
     });
 
-    return {
-      password: password.password,
-    };
+    return password.password;
   },
   addUser: async (username, id_work_unit) => {
     const findUser = await User.count({
