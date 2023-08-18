@@ -5,16 +5,16 @@ const ResponseError = require("../../util/responseError");
 const getAllTypes = async () => {
   return await Type.findAll({
     attributes: {
-      exclude: ["createdAt", "updatedAt"]
-    }
+      exclude: ["createdAt", "updatedAt"],
+    },
   });
 };
 
 const getTypeById = async (id) => {
   const type = await Type.findByPk(id, {
     attributes: {
-      exclude: ["createdAt", "updatedAt"]
-    }
+      exclude: ["createdAt", "updatedAt"],
+    },
   });
   if (!type) {
     throw new ResponseError(400, "Code Item not found");
@@ -22,16 +22,17 @@ const getTypeById = async (id) => {
   return type;
 };
 
-const addType = async (code, name) => {
+const addType = async (code, name, description = "") => {
   await checkCodeIsExist(code);
-  
+
   return await Type.create({
     code: code,
     name: name,
+    description: description,
   });
 };
 
-const updateType = async (id, code, name) => {
+const updateType = async (id, code, name, description = "") => {
   const type = await Type.findByPk(id);
   if (!type) {
     throw new ResponseError(400, "Type item is not found");
@@ -42,6 +43,7 @@ const updateType = async (id, code, name) => {
   return await type.update({
     code: code,
     name: name,
+    description: description,
   });
 };
 
@@ -58,8 +60,8 @@ const checkType = async (id) => {
   return checkType;
 };
 
-// This function for checking "Code" is exist or not. 
-// Return error if "Code" has more than count parameter. 
+// This function for checking "Code" is exist or not.
+// Return error if "Code" has more than count parameter.
 // Count parameter check how many "Code" are same in database
 // Count = 1 is for add, Count = 2 is for update
 const checkCodeIsExist = async (code, id = null) => {
@@ -67,8 +69,8 @@ const checkCodeIsExist = async (code, id = null) => {
     where: {
       code: code,
       id: {
-        [Op.ne]: id
-      }
+        [Op.ne]: id,
+      },
     },
   });
 

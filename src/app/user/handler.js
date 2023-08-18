@@ -3,6 +3,7 @@ const userServices = require("../../service/mysql/userService");
 const {
   loginUserSchema,
   addUserSchema,
+  changePasswordUserSchema,
 } = require("../../validation/userSchema");
 const { validation } = require("../../validation/validate");
 
@@ -17,7 +18,7 @@ module.exports = {
         data: {
           accessToken: user.token,
           user: user.userRole,
-          department: user.userDepartment,
+          workUnit: user.userWorkUnit,
         },
       });
     } catch (error) {
@@ -29,7 +30,7 @@ module.exports = {
       const dataUser = validation(addUserSchema, req.body);
       const addedUser = await userServices.addUser(
         dataUser.username,
-        dataUser.id_department
+        dataUser.id_work_unit
       );
 
       res.status(201).json({
@@ -44,9 +45,9 @@ module.exports = {
       next(error);
     }
   },
-  handlerGetAllUser: async (req, res, next) => {
+  handlerGetAllUserWithoutAdmin: async (req, res, next) => {
     try {
-      const user = await userServices.getAllUser();
+      const user = await userServices.getAllUserWithoutAdmin();
       res.status(200).json({
         status: "success",
         message: "successfully get all User",
@@ -66,6 +67,36 @@ module.exports = {
         data: {
           password: user,
         },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerChangePassword: async (req, res, next) => {
+    try {
+      const userUUID = req.user.uuid;
+      const requestData = validation(changePasswordUserSchema, req.body);
+      await userServices.changePassword(
+        (id = userUUID),
+        requestData.oldPassword,
+        requestData.newPassword,
+        requestData.confirmPassword
+      );
+      res.status(200).json({
+        status: "success",
+        message: "successfully change password User",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerGetAllUserWithoutAdmin: async (req, res, next) => {
+    try {
+      const users = await userServices.getAllUserWithoutAdmin();
+      res.status(200).json({
+        status: "success",
+        message: "successfully get all Users",
+        data: users,
       });
     } catch (error) {
       next(error);

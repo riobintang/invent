@@ -14,10 +14,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      quantity: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
       id_added_item: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -28,11 +24,11 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_department: {
+      id_work_unit: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "departments",
+          model: "work_units",
           key: "id",
         },
         onUpdate: "CASCADE",

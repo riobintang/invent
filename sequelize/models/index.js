@@ -54,13 +54,13 @@ sequelize.models.User.belongsTo(sequelize.models.Role, {
   targetKey: "id",
 });
 
-// User and Department
-sequelize.models.Department.hasMany(sequelize.models.User, {
-  foreignKey: "id_department",
+// User and Work Unit
+sequelize.models.Work_unit.hasMany(sequelize.models.User, {
+  foreignKey: "id_work_unit",
   targetKey: "id",
 });
-sequelize.models.User.belongsTo(sequelize.models.Department, {
-  foreignKey: "id_department",
+sequelize.models.User.belongsTo(sequelize.models.Work_unit, {
+  foreignKey: "id_work_unit",
   sourceKey: "id",
 });
 
@@ -84,33 +84,25 @@ sequelize.models.NameItem.hasMany(sequelize.models.Added_item, {
   targetKey: "id",
 });
 
-// Added_item and Work Unit
-sequelize.models.Added_item.belongsTo(sequelize.models.Work_unit, {
-  foreignKey: "id_work_unit",
-  sourceKey: "id",
-});
-sequelize.models.Work_unit.hasMany(sequelize.models.Added_item, {
-  foreignKey: "id_work_unit",
-  targetKey: "id",
-});
 
 // Inventory and Added_item
 sequelize.models.Inventory.belongsTo(sequelize.models.Added_item, {
   foreignKey: "id_added_item",
   sourceKey: "id",
 });
+
 sequelize.models.Added_item.hasMany(sequelize.models.Inventory, {
   foreignKey: "id_added_item",
   targetKey: "id",
 });
 
-// Inventory and Department
-sequelize.models.Inventory.belongsTo(sequelize.models.Department, {
-  foreignKey: "id_department",
+// Inventory and Work Unit
+sequelize.models.Inventory.belongsTo(sequelize.models.Work_unit, {
+  foreignKey: "id_work_unit",
   sourceKey: "id",
 });
-sequelize.models.Department.hasMany(sequelize.models.Inventory, {
-  foreignKey: "id_department",
+sequelize.models.Work_unit.hasMany(sequelize.models.Inventory, {
+  foreignKey: "id_work_unit",
   targetKey: "id",
 });
 

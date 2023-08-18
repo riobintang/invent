@@ -36,11 +36,11 @@ module.exports = {
         onDelete: "CASCADE",
         defaultValue: 2,
       },
-      id_department: {
+      id_work_unit: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "departments",
+          model: "work_units",
           key: "id",
         },
         onUpdate: "CASCADE",

@@ -12,10 +12,6 @@ function createModelInventory(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       id_added_item: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -26,21 +22,11 @@ function createModelInventory(sequelize, DataTypes) {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_name_item: {
+      id_work_unit: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "nameItems",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_department: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "departments",
+          model: "work_units",
           key: "id",
         },
         onUpdate: "CASCADE",

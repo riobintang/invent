@@ -31,7 +31,7 @@ module.exports = {
   handlerAddType: async (req, res, next) => {
     try {
       const requestData = validation(typeSchema, req.body);
-      await typeService.addType(requestData.code, requestData.name);
+      await typeService.addType(requestData.code, requestData.name, requestData.description);
       res.status(201).json({
         status: "success",
         message: "successfully add Type",
@@ -43,12 +43,9 @@ module.exports = {
   handlerUpdateType: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const requestData = validation(typeSchema, {
-        code: req.body.code,
-        name: req.body.name,
-      });
+      const requestData = validation(typeSchema, req.body);
 
-      await typeService.updateType(id, requestData.code, requestData.name);
+      await typeService.updateType(id, requestData.code, requestData.name, requestData.description);
       res.status(200).json({
         status: "success",
         message: "successfully update Type",

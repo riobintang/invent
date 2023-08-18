@@ -14,12 +14,14 @@ module.exports = {
      */
     await queryInterface.bulkInsert("work_units", [
       {
+        id: 1,
         code: "0100",
         name: "KS",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
+        id:2, 
         code: '0200',
         name: 'WKS 2',
         createdAt: new Date(),

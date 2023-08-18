@@ -2,7 +2,9 @@ const { Added_item } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 
 module.exports = {
-  addItem: async () => {},
+  addItem: async () => {
+    
+  },
   getAllItems: async () => {
     return await Added_item.findAll({
       attributes: {
@@ -23,5 +25,7 @@ module.exports = {
 
     return item;
   },
-  updateItem: async () => {},
+  updateItem: async (id) => {
+
+  },
 };

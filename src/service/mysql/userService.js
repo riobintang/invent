@@ -1,15 +1,18 @@
 const { Op } = require("sequelize");
 const randomstring = require("randomstring");
 
-const { User, Role, Department } = require("../../../sequelize/models");
+const { User, Role, Work_unit } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 const bcrypt = require("bcrypt");
 const generateJWT = require("../../util/generateJWT");
 const generatePassword = require("../../util/generatePassword");
 
 module.exports = {
-  getUserById: async (id) => {
-    const user = await User.findByPk(id, {
+  getUserByUUID: async (uuid) => {
+    const user = await User.findOne({
+      where: {
+        uuid,
+      },
       attributes: {
         exclude: ["password", "createdAt", "updatedAt"],
       },
@@ -28,7 +31,7 @@ module.exports = {
       where: {
         username: requestData.username,
       },
-      include: [{ model: Role }, { model: Department }],
+      include: [{ model: Role }, { model: Work_unit }],
     });
     if (!user) {
       throw new ResponseError(401, "Username/Email or Password wrong");
@@ -46,8 +49,8 @@ module.exports = {
 
     return {
       token: token,
-      userRole: user.Role.value == "1" ? "admin" : "user",
-      userDepartment: user.Department.name,
+      userRole: user.Role.value == "1" ? "admin sarana" : "admin jurusan",
+      userWorkUnit: user.Work_unit.name,
     };
   },
   resetPasswordUser: async (uuid) => {
@@ -70,7 +73,7 @@ module.exports = {
       password: password.password,
     };
   },
-  addUser: async (username, id_department) => {
+  addUser: async (username, id_work_unit) => {
     const findUser = await User.count({
       where: {
         username,
@@ -85,7 +88,7 @@ module.exports = {
 
     await User.create({
       username: username,
-      id_department: id_department,
+      id_work_unit: id_work_unit,
       password: password.hashPassword,
     });
 
@@ -94,16 +97,41 @@ module.exports = {
       password: password.password,
     };
   },
-  getAllUser: async () => {
+  getAllUserWithoutAdmin: async () => {
     const user = await User.findAll({
       where: {
         id_role: {
           [Op.ne]: 1,
         },
       },
-      attributes: { exclude: ["password", "id", "createdAt", "updatedAt"] },
+      attributes: { exclude: ["id_work_unit", "id_role", "password", "id", "createdAt", "updatedAt"] },
+      include: [{model: Work_unit, attributes: ["name"]}]
     });
 
     return user;
+  },
+  changePassword: async (uuid, oldPassword, newPassword, confirmPassword) => {
+    const user = await User.findOne({
+      where: { uuid },
+    });
+    if (!user) {
+      throw new ResponseError(400, "User not found");
+    }
+
+    const passwordValidate = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordValidate) {
+      throw new ResponseError(400, "Wrong Old Password");
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new ResponseError(
+        400,
+        "Password and Confirm password are not same"
+      );
+    }
+
+    return await user.update({
+      password: await bcrypt.hash(newPassword, 10),
+    });
   },
 };

@@ -10,39 +10,20 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
       },
-      code: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        // unique: true,
-      },
       quantity: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      specification: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      year: {
-        type: Sequelize.STRING(4),
+      added_date: {
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       id_name_item: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'nameItems',
-          key: 'id',
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_work_unit: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        referense: {
-          model: 'work_units',
-          key: 'id',
+          model: "nameItems",
+          key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

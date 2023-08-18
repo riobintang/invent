@@ -8,21 +8,12 @@ function createModelAddedItem(sequelize, DataTypes) {
         allowNull: false,
         autoIncrement: true,
       },
-      code: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        // unique: true,
-      },
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      specification: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      year: {
-        type: DataTypes.STRING(4),
+      added_date: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       id_name_item: {
@@ -30,16 +21,6 @@ function createModelAddedItem(sequelize, DataTypes) {
         allowNull: false,
         references: {
           model: "nameItems",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_work_unit: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        referense: {
-          model: "work_units",
           key: "id",
         },
         onUpdate: "CASCADE",
