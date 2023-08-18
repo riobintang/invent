@@ -98,7 +98,7 @@ module.exports = {
     };
   },
   getAllUserWithoutAdmin: async () => {
-    const user = await User.findAll({
+    const users = await User.findAll({
       where: {
         id_role: {
           [Op.ne]: 1,
@@ -108,7 +108,18 @@ module.exports = {
       include: [{model: Work_unit, attributes: ["name"]}]
     });
 
-    return user;
+    const dataJSON = users.map((user) => {
+      return user.toJSON();
+    });
+    
+
+    return dataJSON.map((user) => {
+      return {
+        uuid: user.uuid,
+        username: user.username,
+        work_unit: user.Work_unit.name
+      }
+    });
   },
   changePassword: async (uuid, oldPassword, newPassword, confirmPassword) => {
     const user = await User.findOne({
