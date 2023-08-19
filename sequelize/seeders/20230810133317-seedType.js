@@ -14,18 +14,21 @@ module.exports = {
     */
    await queryInterface.bulkInsert('types', [
       {
+        id: '1',
         code: '220',
         name: 'Mebeler',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
+        id: '2',
         code: '230',
         name: 'Almari',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
+        id: '3',
         code: '240',
         name: 'Elektronik',
         createdAt: new Date(),
