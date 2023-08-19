@@ -2,7 +2,7 @@ const { Added_item } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 
 module.exports = {
-  addItem: async () => {
+  addItem: async (quantity, added_date, id_name_item) => {
     
   },
   getAllItems: async () => {

@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { NameItem, Type } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 const { checkType } = require("./typeService");
@@ -9,8 +10,8 @@ const getAllNameItem = async () => {
 const getNameItemById = async (id) => {
   const nameItem = await NameItem.findByPk(id, {
     attributes: {
-      exclude: ["createdAt", "updatedAt"]
-    }
+      exclude: ["createdAt", "updatedAt"],
+    },
   });
   if (!nameItem) {
     throw new ResponseError(400, "Name Type Item not found");
@@ -30,8 +31,8 @@ const getNameItemByType = async (id_type) => {
       },
     ],
     attributes: {
-      exclude: ["createdAt", "updatedAt"]
-    }
+      exclude: ["createdAt", "updatedAt", "id_type"],
+    },
   });
 
   return nameItem;
@@ -44,15 +45,7 @@ const addNameItem = async (code, name, id_type) => {
     throw new ResponseError(400, "Type is not found");
   }
 
-  const checkNameItem = await NameItem.count({
-    where: {
-      code: code,
-    },
-  });
-
-  if (checkNameItem > 0) {
-    throw new ResponseError(400, "Code has been used");
-  }
+  await checkCodeNameItem(code)
 
   return await NameItem.create({
     code: code,
@@ -61,20 +54,37 @@ const addNameItem = async (code, name, id_type) => {
   });
 };
 
-const updateNameType = async (id, code, name, id_type) => {
-  const type = await Type.findByPk(id);
+const updateNameItem = async (id, code, name, id_type) => {
+  const nameItem = await NameItem.findByPk(id);
 
-  if (!type) {
-    throw new Response(400, "Type is not found");
+  if (!nameItem) {
+    throw new ResponseError(400, "Name Item is not found");
   }
-
+  await checkCodeNameItem(code, id);
   await checkType(id_type);
 
-  return await type.update({
+  return await nameItem.update({
     code,
     name,
     id_type,
   });
+};
+
+const checkCodeNameItem = async (code, id = null) => {
+  const checkCode = await NameItem.count({
+    where: {
+      code,
+      id: { 
+        [Op.ne]: id 
+      },
+    },
+  });
+
+  if (checkCode > 0) {
+    throw new ResponseError(400, "Code has been used");
+  }
+
+  return;
 };
 
 module.exports = {
@@ -82,5 +92,5 @@ module.exports = {
   getNameItemById: getNameItemById,
   getNameItemByType: getNameItemByType,
   addNameItem: addNameItem,
-  updateNameType,
+  updateNameItem,
 };

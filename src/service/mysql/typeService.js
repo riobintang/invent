@@ -54,6 +54,7 @@ const checkType = async (id) => {
     },
   });
 
+
   if (checkType == 0) {
     throw new ResponseError(400, "Type is not found");
   }

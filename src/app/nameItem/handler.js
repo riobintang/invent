@@ -67,7 +67,7 @@ module.exports = {
     try {
       const { id } = req.params;
       const requestData = validation(nameItemSchema, req.body);
-      await nameItemService.updateNameType(
+      await nameItemService.updateNameItem(
         id,
         requestData.code,
         requestData.name,
