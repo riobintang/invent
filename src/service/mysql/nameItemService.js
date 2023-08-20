@@ -58,19 +58,18 @@ const addNameItem = async (code, name, id_type) => {
   });
 };
 
-const updateNameItem = async (id, code, name, id_type) => {
+const updateNameItem = async (id, code, name) => {
   const nameItem = await NameItem.findByPk(id);
 
   if (!nameItem) {
     throw new ResponseError(400, "Name Item is not found");
   }
-  await checkCodeNameItem(code, id, id_type);
-  await checkType(id_type);
-
+  await checkCodeNameItem(code, id, id_type=nameItem.id_type);
+  
   return await nameItem.update({
     code,
     name,
-    id_type,
+
   });
 };
 
