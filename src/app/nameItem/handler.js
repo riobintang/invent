@@ -51,7 +51,7 @@ module.exports = {
   },
   handlerAddNameItem: async (req, res, next) => {
     try {
-      const requestData = validation(nameItemSchema, req.body);
+      const requestData = validation(nameItemSchema.addNameItemSchema, req.body);
       await nameItemService.addNameItem(
         requestData.code,
         requestData.name,
@@ -69,7 +69,7 @@ module.exports = {
   handlerUpdateNameItem: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const requestData = validation(nameItemSchema, req.body);
+      const requestData = validation(nameItemSchema.updatenameItemSchema, req.body);
       await nameItemService.updateNameItem(
         id,
         requestData.code,

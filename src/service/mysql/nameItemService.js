@@ -49,7 +49,7 @@ const addNameItem = async (code, name, id_type) => {
     throw new ResponseError(400, "Type is not found");
   }
 
-  await checkCodeNameItem(code, id_type = id_type)
+  await checkCodeNameItem(code, id=null, id_type)
 
   return await NameItem.create({
     code: code,
@@ -64,6 +64,8 @@ const updateNameItem = async (id, code, name) => {
   if (!nameItem) {
     throw new ResponseError(400, "Name Item is not found");
   }
+
+  console.log(nameItem);
   await checkCodeNameItem(code, id, id_type=nameItem.id_type);
   
   return await nameItem.update({
