@@ -16,6 +16,10 @@ function createModelAddedItem(sequelize, DataTypes) {
         type: DataTypes.DATEONLY,
         allowNull: false,
       },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       id_name_item: {
         type: DataTypes.INTEGER,
         allowNull: false,

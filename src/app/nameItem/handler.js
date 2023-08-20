@@ -35,11 +35,14 @@ module.exports = {
     try {
       const { id_type } = req.params;
 
-      const nameItems = await nameItemService.getNameItemByType(id_type);
+      const { nameItems, type } = await nameItemService.getNameItemByType(
+        id_type
+      );
 
       res.status(200).json({
         status: "success",
         message: "successfully get Name Item by Type",
+        type: type,
         data: nameItems,
       });
     } catch (error) {
@@ -71,7 +74,6 @@ module.exports = {
         id,
         requestData.code,
         requestData.name,
-        requestData.id_type
       );
 
       res.status(200).json({

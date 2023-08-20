@@ -7,9 +7,6 @@ function generateJWT(uuid, value) {
       value: value,
     },
     process.env.private,
-    {
-      expiresIn: "30m",
-    }
   );
 }
 

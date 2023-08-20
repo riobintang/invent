@@ -12,8 +12,9 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    await queryInterface.bulkInsert("nameItems", [
+    await queryInterface.bulkInsert("nameitems", [
       {
+        id: 1,
         code: "001",
         name: "Meja",
         id_type: 1,
@@ -21,6 +22,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 2,
         code: "002",
         name: "Kursi",
         id_type: 1,
@@ -28,6 +30,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 3,
         code: "003",
         name: "Almari Kayu",
         id_type: "2",
@@ -35,6 +38,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 4,
         code: "004",
         name: "Almari Plastik",
         id_type: "2",
@@ -42,6 +46,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 5,
         code: "005",
         name: "Rak Peralatan",
         id_type: "2",
@@ -49,6 +54,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 6,
         code: "006",
         name: "Dispenser, Lemari Es/Kulkas",
         id_type: "3",
@@ -56,6 +62,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 7,
         code: "007",
         name: "Kipas Angin",
         id_type: "3",
@@ -72,6 +79,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete('nameItems', null, {});
+    await queryInterface.bulkDelete("nameitems", null, {});
   },
 };

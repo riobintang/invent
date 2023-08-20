@@ -1,4 +1,6 @@
 const addedItemServices = require("../../service/mysql/addedItemServices");
+const addedItemSchema = require("../../validation/addedItemSchema");
+const { validation } = require("../../validation/validate");
 
 module.exports = {
   handlerGetAllItems: async (req, res, next) => {
@@ -21,6 +23,24 @@ module.exports = {
         status: "success",
         message: "successfully get Item",
         data: item,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerAddItem: async (req, res, next) => {
+    try {
+      const requestData = validation(addedItemSchema, req.body);
+
+      await addedItemServices.addItem(
+        requestData.quantity,
+        requestData.added_date,
+        requestData.id_name_item
+      );
+
+      res.status(201).json({
+        status: "success",
+        message: "successfully add Item",
       });
     } catch (error) {
       next(error);

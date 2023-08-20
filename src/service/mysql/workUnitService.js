@@ -64,9 +64,23 @@ const getWorkUnitById = async (id) => {
   return workUnit;
 };
 
+const searchWorkUnit = async (nameWorkUnit) => {
+  const workUnit = await Work_unit.findOne({
+    where: {
+      name: nameWorkUnit
+    }
+  });
+  if (!workUnit) {
+    throw new ResponseError(400, "Work Unit not found");
+  }
+
+  return workUnit;
+}
+
 module.exports = {
   addWorkUnit: addWorkUnit,
   updateWorkUnit: updateWorkUnit,
   getAllWorkUnit: getAllWorkUnit,
   getWorkUnitById: getWorkUnitById,
+  searchWorkUnit,
 };

@@ -1,9 +1,16 @@
 const { Added_item } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
+const nameItemService = require("./nameItemService");
 
 module.exports = {
   addItem: async (quantity, added_date, id_name_item) => {
-    
+    await nameItemService.foundNameItem(id_name_item);
+
+    return await Added_item.create({
+      quantity, 
+      added_date, 
+      id_name_item,
+    });
   },
   getAllItems: async () => {
     return await Added_item.findAll({
@@ -29,3 +36,5 @@ module.exports = {
 
   },
 };
+
+

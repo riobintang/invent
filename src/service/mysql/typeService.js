@@ -17,7 +17,7 @@ const getTypeById = async (id) => {
     },
   });
   if (!type) {
-    throw new ResponseError(400, "Code Item not found");
+    throw new ResponseError(400, "Type not found");
   }
   return type;
 };

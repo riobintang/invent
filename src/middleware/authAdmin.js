@@ -6,7 +6,7 @@ function checkAdmin(req, res, next) {
   if (checkUser.value !== 1) {
     throw new ResponseError(403, "You don't have permission to access");
   }
-
+  req.user.admin = 1;
   return next();
 }
 

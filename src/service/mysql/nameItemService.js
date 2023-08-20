@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { NameItem, Type } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
-const { checkType } = require("./typeService");
+const { checkType, getTypeById } = require("./typeService");
 
 const getAllNameItem = async () => {
   return await NameItem.findAll();
@@ -20,7 +20,8 @@ const getNameItemById = async (id) => {
 };
 
 const getNameItemByType = async (id_type) => {
-  const nameItem = await NameItem.findAll({
+  const type = await getTypeById(id_type);
+  const nameItems = await NameItem.findAll({
     include: [
       {
         model: Type,
@@ -35,7 +36,10 @@ const getNameItemByType = async (id_type) => {
     },
   });
 
-  return nameItem;
+  return {
+    nameItems,
+    type: type.name,
+  };
 };
 
 const addNameItem = async (code, name, id_type) => {
@@ -45,7 +49,7 @@ const addNameItem = async (code, name, id_type) => {
     throw new ResponseError(400, "Type is not found");
   }
 
-  await checkCodeNameItem(code)
+  await checkCodeNameItem(code, id_type = id_type)
 
   return await NameItem.create({
     code: code,
@@ -60,7 +64,7 @@ const updateNameItem = async (id, code, name, id_type) => {
   if (!nameItem) {
     throw new ResponseError(400, "Name Item is not found");
   }
-  await checkCodeNameItem(code, id);
+  await checkCodeNameItem(code, id, id_type);
   await checkType(id_type);
 
   return await nameItem.update({
@@ -70,10 +74,11 @@ const updateNameItem = async (id, code, name, id_type) => {
   });
 };
 
-const checkCodeNameItem = async (code, id = null) => {
+const checkCodeNameItem = async (code, id = null, id_type) => {
   const checkCode = await NameItem.count({
     where: {
       code,
+      id_type,
       id: { 
         [Op.ne]: id 
       },
@@ -87,10 +92,24 @@ const checkCodeNameItem = async (code, id = null) => {
   return;
 };
 
+const foundNameItem = async (id) => {
+  const nameItem = await NameItem.count({
+    where: {
+      id: id,
+    }
+  });
+  if (nameItem == 0) {
+    throw new ResponseError(400, "Name Item not found");
+  }
+
+  return;
+}
+
 module.exports = {
   getAllNameItem: getAllNameItem,
   getNameItemById: getNameItemById,
   getNameItemByType: getNameItemByType,
   addNameItem: addNameItem,
   updateNameItem,
+  foundNameItem,
 };

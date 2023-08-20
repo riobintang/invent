@@ -18,6 +18,10 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: false,
       },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       id_name_item: {
         type: Sequelize.INTEGER,
         allowNull: false,
