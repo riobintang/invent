@@ -39,7 +39,7 @@ function createModelNameItem(sequelize, DataTypes) {
       },
     },
     {
-      tableName: "nameItems",
+      tableName: "nameitems",
     }
   );
 

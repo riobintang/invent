@@ -44,7 +44,7 @@ function createModelInventCondition(sequelize, DataTypes) {
       },
     },
     {
-      tableName: "inventConditions",
+      tableName: "inventconditions",
     }
   );
   return InventCondition;
