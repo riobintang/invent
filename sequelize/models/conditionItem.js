@@ -24,7 +24,7 @@ function createModelConditionItem(sequelize, DataTypes) {
       },
     },
     {
-      tableName: "conditionitems",
+      tableName: "condition_items",
     }
   );
 
