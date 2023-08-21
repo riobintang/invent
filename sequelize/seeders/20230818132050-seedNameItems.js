@@ -12,7 +12,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    await queryInterface.bulkInsert("nameitems", [
+    await queryInterface.bulkInsert("name_items", [
       {
         id: 1,
         code: "001",
@@ -79,6 +79,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete("nameitems", null, {});
+    await queryInterface.bulkDelete("name_items", null, {});
   },
 };
