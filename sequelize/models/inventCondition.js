@@ -22,7 +22,7 @@ function createModelInventCondition(sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "conditionItems",
+          model: "condition_items",
           key: "id",
         },
         onUpdate: "CASCADE",
