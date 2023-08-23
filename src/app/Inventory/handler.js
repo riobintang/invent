@@ -8,6 +8,11 @@ module.exports = {
   handlerGetAllInventoryByWorkUnit: async (req, res, next) => {
     try {
       const data = await inventoryService.getAllInventory;
+      res.status(200).json({
+        status: "success",
+        message: "successfully get Inventories",
+        data,
+      });
     } catch (error) {
       next(error);
     }
@@ -15,10 +20,11 @@ module.exports = {
   handlerAddInventory: async (req, res, next) => {
     try {
       const requestData = validation(inventorySchema, req.body);
+
       await inventoryService.addInventory(
-        requestData.quantity,
-        requestData.id_name_item,
-        requestData.id_work_unit
+        (quantity = requestData.quantity),
+        (id_name_item = requestData.id_name_item),
+        (id_work_unit = requestData.id_work_unit)
       );
       res.status(201).json({
         status: "success",
