@@ -5,7 +5,7 @@ const nameItemService = require("./nameItemService");
 module.exports = {
   addItem: async (quantity, added_date, id_name_item) => {
     await nameItemService.foundNameItem(id_name_item);
-
+    await nameItemService.updateQuantity(id_name_item, quantity);
     return await Added_item.create({
       quantity, 
       added_date, 

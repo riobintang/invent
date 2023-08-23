@@ -1,6 +1,6 @@
 const ResponseError = require("../util/responseError");
 
-function checkAdmin(req, res, next) {
+function authAdmin(req, res, next) {
   const checkUser = req.user;
 
   if (checkUser.value !== 1) {
@@ -10,4 +10,4 @@ function checkAdmin(req, res, next) {
   return next();
 }
 
-module.exports = checkAdmin;
+module.exports = authAdmin;

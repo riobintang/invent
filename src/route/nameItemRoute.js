@@ -1,3 +1,4 @@
+const { handlerGetAllItemUnsigned } = require("../app/itemDistribution/handler");
 const {
   handlerGetAllNameItem,
   handlerGetNameItemById,
@@ -12,6 +13,8 @@ const router = require("express").Router();
 
 router.post("/nameitems", authToken, checkAdmin, handlerAddNameItem);
 router.put("/nameitems/:id", authToken, checkAdmin, handlerUpdateNameItem);
+router.get("/nameitems/notassigned", authToken, checkAdmin, handlerGetAllItemUnsigned);
+
 router.get('/:id_type/nameitems', authToken, checkAdmin, handlerGetNameItemByType);
 // router.get("/nameitems", authToken, checkAdmin, handlerGetAllNameItem);
 router.get("/:id_type/nameitems/:id", authToken, checkAdmin, handlerGetNameItemById);

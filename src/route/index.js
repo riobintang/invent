@@ -7,6 +7,7 @@ const added_itemRoute = require("./added_itemRoute");
 const typeRoute = require("./typeRoute");
 const nameItemRoute = require("./nameItemRoute");
 const workUnitRoute = require("./workUnitRoute");
+const inventoryRoute = require("./inventoryRoute");
 const router = express.Router();
 
 // router.use("/api", publicRouter);
@@ -16,6 +17,6 @@ router.use("/api/roles", roleRoute);
 router.use("/api/workunits", workUnitRoute);
 router.use("/api/types", typeRoute);
 router.use("/api/types", nameItemRoute); // It will read /api/types/nameitems
-
+router.use("/api/inventories", inventoryRoute);
 router.use("/api/addeditems", added_itemRoute);
 module.exports = router;

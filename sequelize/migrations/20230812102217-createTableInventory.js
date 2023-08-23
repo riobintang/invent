@@ -14,11 +14,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      id_added_item: {
+      id_name_item: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "added_items",
+          model: "name_items",
           key: "id",
         },
         onUpdate: "CASCADE",

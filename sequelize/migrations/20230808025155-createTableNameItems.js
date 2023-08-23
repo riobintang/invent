@@ -19,6 +19,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      quantity : {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
       id_type: {
         type: Sequelize.INTEGER,
         allowNull: false,

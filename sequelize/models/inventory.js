@@ -12,11 +12,11 @@ function createModelInventory(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      id_added_item: {
+      id_name_item: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "added_items",
+          model: "name_items",
           key: "id",
         },
         onUpdate: "CASCADE",

@@ -20,7 +20,7 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const nameItem = await nameItemService.getNameItemById(id);
+      const nameItem = await nameItemService.getNameItemById(id, "quantity");
 
       res.status(200).json({
         status: "success",
@@ -36,7 +36,8 @@ module.exports = {
       const { id_type } = req.params;
 
       const { nameItems, type } = await nameItemService.getNameItemByType(
-        id_type
+        id_type,
+        "quantity"
       );
 
       res.status(200).json({
@@ -84,4 +85,17 @@ module.exports = {
       next(error);
     }
   },
+  // handlerGetAllItems: async (req, res, next) => {
+  //   try {
+  //     const nameItems = await nameItemService.getAllNameItem();
+
+  //     res.status(200).json({
+  //       status: "success",
+  //       message: "successfully get all Name Item",
+  //       data: nameItems,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 };

@@ -17,6 +17,11 @@ function createModelNameItem(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
       id_type: {
         type: DataTypes.INTEGER,
         allowNull: false,
