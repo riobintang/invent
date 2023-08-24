@@ -1,4 +1,4 @@
-const { Added_item } = require("../../../sequelize/models");
+const { Added_item, NameItem } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 const nameItemService = require("./nameItemService");
 
@@ -13,12 +13,28 @@ module.exports = {
       description,
     });
   },
-  getAllItems: async () => {
-    return await Added_item.findAll({
+  getAllItems: async (year=null) => {
+    const items=  await Added_item.findAll({
       attributes: {
         exclude: ["createdAt", "updatedAt"]
+      },
+      include: [{model: NameItem}]
+    });
+    console.log(items)
+    const itemsJSON = items.map((item) => {
+      return item.toJSON();
+    });
+
+    const result = itemsJSON.map((item) => {
+      return {
+        id: item.id,
+        quantity: item.quantity,
+        added_date: item.added_date,
+        description: item.description,
+        name_item: item.NameItem.name,
       }
     });
+    return result;
   },
   getItem: async (id) => {
     const item = await Added_item.findByPk(id, {

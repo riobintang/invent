@@ -92,10 +92,10 @@ const add = async (quantity, id_name_item, id_work_unit) => {
   }
 };
 
-const getAll = async (id_added_item = null, id_work_unit = null) => {
+const getAll = async (id_name_item = null, id_work_unit = null) => {
   const items = await Inventory.findAll({
     where: {
-      id_added_item,
+      id_name_item,
       id_work_unit,
     },
   });
@@ -120,6 +120,8 @@ const getAllItemUnsigned = async () => {
 
   return newResult;
 };
+
+
 
 module.exports = {
   getAllInventoryAddedWorkUnit: getAll,
