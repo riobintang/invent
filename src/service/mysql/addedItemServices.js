@@ -3,13 +3,14 @@ const ResponseError = require("../../util/responseError");
 const nameItemService = require("./nameItemService");
 
 module.exports = {
-  addItem: async (quantity, added_date, id_name_item) => {
+  addItem: async (quantity, added_date, id_name_item, description=null) => {
     await nameItemService.foundNameItem(id_name_item);
     await nameItemService.updateQuantity(id_name_item, quantity);
     return await Added_item.create({
       quantity, 
       added_date, 
       id_name_item,
+      description,
     });
   },
   getAllItems: async () => {

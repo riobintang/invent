@@ -35,7 +35,8 @@ module.exports = {
       await addedItemServices.addItem(
         requestData.quantity,
         requestData.added_date,
-        requestData.id_name_item
+        requestData.id_name_item,
+        requestData.description,
       );
 
       res.status(201).json({
