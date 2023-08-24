@@ -15,6 +15,15 @@ function createModelAddedItem(sequelize, DataTypes) {
       added_date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
+        get: function () {
+          return this.getDataValue("added_date").split("-").reverse().join("-");
+        },
+        set(value) {
+          return this.setDataValue(
+            "added_date",
+            value.split("-").reverse().join("-")
+          );
+        },
       },
       description: {
         type: DataTypes.STRING,

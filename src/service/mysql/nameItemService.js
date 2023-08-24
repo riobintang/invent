@@ -4,11 +4,26 @@ const ResponseError = require("../../util/responseError");
 const { checkType, getTypeById } = require("./typeService");
 
 const getAllNameItem = async (excludeQTY = "") => {
-  return await NameItem.findAll({
+  const items = await NameItem.findAll({
     attributes: {
       exclude: ["createdAt", "updatedAt", excludeQTY],
     },
+    include: [{model: Type}]
   });
+  const itemsJSON = items.map((item) => {
+    return item.toJSON();
+  });
+
+  const result = itemsJSON.map((item) => {
+    return {
+      //id: item.id,
+      code: item.code,
+      name: item.name,
+      quantity: item.quantity,
+      code_type: item.Type.code,
+    }
+  });
+  return result;
 };
 
 const getNameItemById = async (id, excludeQTY = "") => {
@@ -83,7 +98,6 @@ const updateQuantity = async (id, quantity) => {
   if (!nameItem) {
     throw new ResponseError(400, "Name Item is not found");
   }
-  console.log(nameItem)
   return await nameItem.update({
     quantity: quantity+nameItem.quantity,
   });

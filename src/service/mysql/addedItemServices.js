@@ -1,11 +1,14 @@
+
 const { Added_item, NameItem } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 const nameItemService = require("./nameItemService");
+
 
 module.exports = {
   addItem: async (quantity, added_date, id_name_item, description=null) => {
     await nameItemService.foundNameItem(id_name_item);
     await nameItemService.updateQuantity(id_name_item, quantity);
+
     return await Added_item.create({
       quantity, 
       added_date, 
@@ -20,7 +23,7 @@ module.exports = {
       },
       include: [{model: NameItem}]
     });
-    console.log(items)
+
     const itemsJSON = items.map((item) => {
       return item.toJSON();
     });
