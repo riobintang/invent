@@ -12,6 +12,17 @@ function createModelInventory(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      status: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "condition_items",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+        defaultValue: 1,
+      },
       id_name_item: {
         type: DataTypes.INTEGER,
         allowNull: false,

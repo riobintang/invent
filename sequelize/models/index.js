@@ -84,7 +84,6 @@ sequelize.models.NameItem.hasMany(sequelize.models.Added_item, {
   targetKey: "id",
 });
 
-
 // Inventory and NameItem
 sequelize.models.Inventory.belongsTo(sequelize.models.NameItem, {
   foreignKey: "id_name_item",
@@ -114,6 +113,16 @@ sequelize.models.InventCondition.belongsTo(sequelize.models.Inventory, {
 sequelize.models.Inventory.hasMany(sequelize.models.InventCondition, {
   foreignKey: "id_inventory",
   targetKey: "id",
+});
+
+sequelize.models.Inventory.hasMany(sequelize.models.ConditionItem, {
+  foreignKey: "status",
+  targetKey: "id",
+});
+
+sequelize.models.ConditionItem.belongsTo(sequelize.models.Inventory, {
+  foreignKey: "status",
+  sourceKey: "id",
 });
 
 // InventCondition and Condition
