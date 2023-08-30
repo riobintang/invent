@@ -1,5 +1,6 @@
 const inventoryService = require("../../service/mysql/inventoryService");
 const nameItemService = require("../../service/mysql/nameItemService");
+const userService = require("../../service/mysql/userService");
 const workUnitService = require("../../service/mysql/workUnitService");
 const inventorySchema = require("../../validation/inventorySchema");
 const { validation } = require("../../validation/validate");
@@ -7,7 +8,12 @@ const { validation } = require("../../validation/validate");
 module.exports = {
   handlerGetAllInventoryByWorkUnit: async (req, res, next) => {
     try {
-      const data = await inventoryService.getAllInventory;
+      console.log(req.user)
+      const { uuid } = req.user;
+      const { nameitem } = req.query;
+      
+      const userWorkUnit = await userService.getUserByUUID(uuid);
+      const data = await inventoryService.getAllInventoryAddedWorkUnit({name_item: nameitem, id_work_unit: userWorkUnit.Work_unit.id});
       res.status(200).json({
         status: "success",
         message: "successfully get Inventories",

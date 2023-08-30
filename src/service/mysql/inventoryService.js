@@ -41,11 +41,14 @@ const foundInventory = async (
 
 const add = async (quantity, id_name_item, id_work_unit) => {
   // const t = await sequelize.transaction();
-  const dataQty = await sequelize.query("SELECT ni.id, ni.code, ni.name, ni.quantity, COUNT(inventories.id_name_item) AS assigned, (ni.quantity - COUNT(inventories.id_name_item)) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item GROUP BY ni.id, ni.code, ni.name, ni.quantity HAVING ni.id = :id_name_item;", {
-    replacements: { id_name_item: id_name_item },
-    type: sequelize.QueryTypes.SELECT
-  });
-  console.log(dataQty)
+  const dataQty = await sequelize.query(
+    "SELECT ni.id, ni.code, ni.name, ni.quantity, COUNT(inventories.id_name_item) AS assigned, (ni.quantity - COUNT(inventories.id_name_item)) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item GROUP BY ni.id, ni.code, ni.name, ni.quantity HAVING ni.id = :id_name_item;",
+    {
+      replacements: { id_name_item: id_name_item },
+      type: sequelize.QueryTypes.SELECT,
+    }
+  );
+  console.log(dataQty);
   if (!dataQty) {
     throw new ResponseError(400, "Item not found");
   }
@@ -53,24 +56,17 @@ const add = async (quantity, id_name_item, id_work_unit) => {
   const countInvent = await Inventory.findOne({
     where: {
       id_name_item,
-      id_work_unit
+      id_work_unit,
     },
     order: [["createdAt", "DESC"]],
   });
 
   const qtyLatest = parseInt(countInvent?.codeInvent || 0);
-  // const qtyInventoryLeft = nameItem.quantity - qtyLatest;
-  // console.log(dataQty)
-  console.log(`quantity = ${{quantity}}`)
-  console.log(dataQty.total);
-  console.log(quantity > dataQty.total)
+
+
   if (quantity > dataQty[0].total) {
     throw new ResponseError(400, `Max quantity is ${dataQty[0].total}`);
   }
-  //const newCodeInvent = (qtyLatest + 1).toString().padStart(3, "0");
-  console.log(quantity);
-  console.log(qtyLatest);
-  console.log(quantity + qtyLatest);
   try {
     for (var x = qtyLatest + 1; x <= quantity + qtyLatest; x++) {
       const insertInvent = await Inventory.create(
@@ -92,11 +88,21 @@ const add = async (quantity, id_name_item, id_work_unit) => {
   }
 };
 
-const getAll = async (id_name_item = null, id_work_unit = null) => {
+const getAll = async ({name_item = null, id_work_unit = null}) => {
+  const arrItems = [];
+  console.log(name_item);
+  console.log(id_work_unit)
+  if (name_item) {
+    const id_name_item = await nameItemService.getNameItemByName(name_item);
+    arrItems.push({id_name_item: id_name_item.id})
+  }
+  if (id_work_unit) {
+    arrItems.push({id_work_unit})
+  }
+  console.log(arrItems)
   const items = await Inventory.findAll({
     where: {
-      id_name_item,
-      id_work_unit,
+      [Op.and]: arrItems,
     },
   });
 
@@ -120,8 +126,6 @@ const getAllItemUnsigned = async () => {
 
   return newResult;
 };
-
-
 
 module.exports = {
   getAllInventoryAddedWorkUnit: getAll,

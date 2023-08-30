@@ -17,7 +17,7 @@ module.exports = {
         exclude: ["password", "createdAt", "updatedAt"],
       },
       include: [
-        { model: Department, attributes: ["name", "id"] },
+        { model: Work_unit, attributes: ["name", "id"] },
         { model: Role, attributes: ["name", "id"] },
       ],
     });
@@ -49,7 +49,7 @@ module.exports = {
 
     return {
       token: token,
-      userRole: user.Role.value == "1" ? "admin sarana" : "admin jurusan",
+      userRole: user.Role.value == "1" ? "admin sarana prasarana" : "admin jurusan",
       userWorkUnit: user.Work_unit.name,
     };
   },

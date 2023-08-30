@@ -8,7 +8,7 @@ const getAllNameItem = async (excludeQTY = "") => {
     attributes: {
       exclude: ["createdAt", "updatedAt", excludeQTY],
     },
-    include: [{model: Type}]
+    include: [{ model: Type }],
   });
   const itemsJSON = items.map((item) => {
     return item.toJSON();
@@ -21,7 +21,7 @@ const getAllNameItem = async (excludeQTY = "") => {
       name: item.name,
       quantity: item.quantity,
       code_type: item.Type.code,
-    }
+    };
   });
   return result;
 };
@@ -38,27 +38,40 @@ const getNameItemById = async (id, excludeQTY = "") => {
   return nameItem;
 };
 
-const getNameItemByType = async (id_type, excludeQTY="") => {
+const getNameItemByType = async (id_type, excludeQTY = "") => {
   const type = await getTypeById(id_type);
 
-    const nameItems = await NameItem.findAll({
-      include: [
-        {
-          model: Type,
-          where: {
-            id: id_type,
-          },
-          attributes: [],
+  const nameItems = await NameItem.findAll({
+    include: [
+      {
+        model: Type,
+        where: {
+          id: id_type,
         },
-      ],
-      attributes: {
-        exclude: ["createdAt", "updatedAt", "id_type", excludeQTY],
+        attributes: [],
       },
-    });
+    ],
+    attributes: {
+      exclude: ["createdAt", "updatedAt", "id_type", excludeQTY],
+    },
+  });
   return {
     nameItems,
     type: type.name,
   };
+};
+
+const getNameItemByName = async (name) => {
+  const name_item = await NameItem.findOne({
+    where: {
+      name,
+    },
+  });
+  if (!name_item) {
+    throw new ResponseError(400, "Name Item not found");
+  }
+
+  return name_item;
 };
 
 const addNameItem = async (code, name, id_type) => {
@@ -99,7 +112,7 @@ const updateQuantity = async (id, quantity) => {
     throw new ResponseError(400, "Name Item is not found");
   }
   return await nameItem.update({
-    quantity: quantity+nameItem.quantity,
+    quantity: quantity + nameItem.quantity,
   });
 };
 
@@ -138,6 +151,7 @@ module.exports = {
   getAllNameItem: getAllNameItem,
   getNameItemById: getNameItemById,
   getNameItemByType: getNameItemByType,
+  getNameItemByName,
   addNameItem: addNameItem,
   updateNameItem,
   foundNameItem,

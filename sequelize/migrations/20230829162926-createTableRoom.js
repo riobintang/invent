@@ -3,36 +3,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("inventories", {
+    /**
+     * Add altering commands here.
+     *
+     * Example:
+     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
+     */
+    await queryInterface.createTable("rooms", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
       },
-      codeInvent: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      status: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        references: {
-          model: "condition_items",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_name_item: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "name_items",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       id_work_unit: {
         type: Sequelize.INTEGER,
@@ -48,7 +33,7 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      updatedAt: {
+      onUpdate: {
         type: Sequelize.DATE,
         allowNull: false,
       },
@@ -56,6 +41,12 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("inventories");
+    /**
+     * Add reverting commands here.
+     *
+     * Example:
+     * await queryInterface.dropTable('users');
+     */
+    await queryInterface.dropTable("rooms");
   },
 };
