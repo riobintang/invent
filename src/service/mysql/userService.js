@@ -18,7 +18,7 @@ module.exports = {
       },
       include: [
         { model: Work_unit, attributes: ["name", "id"] },
-        { model: Role, attributes: ["name", "id"] },
+        { model: Role, attributes: ["name", "id", "value"] },
       ],
     });
     if (!user) {
@@ -26,6 +26,7 @@ module.exports = {
     }
     return user;
   },
+  
   login: async (requestData) => {
     const user = await User.findOne({
       where: {
@@ -106,12 +107,7 @@ module.exports = {
       include: [{model: Work_unit, attributes: ["name"]}]
     });
 
-    const dataJSON = users.map((user) => {
-      return user.toJSON();
-    });
-    
-
-    return dataJSON.map((user) => {
+    return users.map((user) => {
       return {
         uuid: user.uuid,
         username: user.username,

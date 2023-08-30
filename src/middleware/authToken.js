@@ -16,7 +16,6 @@ function authToken(req, res, next) {
 
     req.user = {
         uuid: decoded.uuid,
-        value: decoded.value,
     }
 
     return next();

@@ -8,12 +8,14 @@ const { validation } = require("../../validation/validate");
 module.exports = {
   handlerGetAllInventoryByWorkUnit: async (req, res, next) => {
     try {
-      console.log(req.user)
       const { uuid } = req.user;
       const { nameitem } = req.query;
-      
+
       const userWorkUnit = await userService.getUserByUUID(uuid);
-      const data = await inventoryService.getAllInventoryAddedWorkUnit({name_item: nameitem, id_work_unit: userWorkUnit.Work_unit.id});
+      const data = await inventoryService.getAllInventoryAddedWorkUnit({
+        name_item: nameitem,
+        id_work_unit: userWorkUnit.Work_unit.id,
+      });
       res.status(200).json({
         status: "success",
         message: "successfully get Inventories",
@@ -27,11 +29,7 @@ module.exports = {
     try {
       const requestData = validation(inventorySchema, req.body);
 
-      await inventoryService.addInventory(
-        (quantity = requestData.quantity),
-        (id_name_item = requestData.id_name_item),
-        (id_work_unit = requestData.id_work_unit)
-      );
+      await inventoryService.addInventory(requestData);
       res.status(201).json({
         status: "success",
         message: "successfully assign items to work unit",
@@ -49,7 +47,7 @@ module.exports = {
           (nameWorkUnit = unit)
         );
       }
-      const data = await inventoryService.getAllInventory(id_work_unit);
+      const data = await inventoryService.getAllInventory({ id_work_unit });
 
       res.status(200).json({
         status: "success",
@@ -80,6 +78,23 @@ module.exports = {
         status: "success",
         message: "successfully get All Items",
         data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerGetAllAssignedItemsByWorkUnit: async (req, res, next) => {
+    try {
+      const { uuid } = req.user;
+      const user = await userService.getUserByUUID(uuid);
+      const data = await inventoryService.getAllItemAssignedByWorkUnit({
+        id_work_unit: user.id_work_unit,
+      });
+
+      res.status(200).json({
+        status: "success",
+        message: "successfully get All Assigned Items",
+        data: data,
       });
     } catch (error) {
       next(error);

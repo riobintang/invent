@@ -1,5 +1,6 @@
 const nameItemService = require("../../service/mysql/nameItemService");
-const nameItemSchema = require("../../validation/nameItemSchema");
+const { updateNameItemSchema, addNameItemSchema } = require("../../validation/nameItemSchema");
+
 const { validation } = require("../../validation/validate");
 
 module.exports = {
@@ -52,7 +53,7 @@ module.exports = {
   },
   handlerAddNameItem: async (req, res, next) => {
     try {
-      const requestData = validation(nameItemSchema.addNameItemSchema, req.body);
+      const requestData = validation(addNameItemSchema, req.body);
       await nameItemService.addNameItem(
         requestData.code,
         requestData.name,
@@ -70,7 +71,7 @@ module.exports = {
   handlerUpdateNameItem: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const requestData = validation(nameItemSchema.updatenameItemSchema, req.body);
+      const requestData = validation(updateNameItemSchema, req.body);
       await nameItemService.updateNameItem(
         id,
         requestData.code,

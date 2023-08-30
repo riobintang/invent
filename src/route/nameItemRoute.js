@@ -13,7 +13,7 @@ const router = require("express").Router();
 
 router.post("/nameitems", authToken, checkAdmin, handlerAddNameItem);
 router.put("/nameitems/:id", authToken, checkAdmin, handlerUpdateNameItem);
-router.get("/nameitems/notassigned", authToken, checkAdmin, handlerGetAllItemUnsigned);
+// router.get("/nameitems/notassigned", authToken, checkAdmin, handlerGetAllItemUnsigned);
 
 router.get('/:id_type/nameitems', authToken, checkAdmin, handlerGetNameItemByType);
 // router.get("/nameitems", authToken, checkAdmin, handlerGetAllNameItem);
