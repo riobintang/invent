@@ -62,7 +62,7 @@ const add = async ({ quantity, id_name_item, id_work_unit }) => {
       id_name_item,
       id_work_unit,
     },
-    order: [["createdAt", "DESC"]],
+    order: [["codeInvent", "DESC"]],
   });
 
   const qtyLatest = parseInt(countInvent?.codeInvent || 0);
