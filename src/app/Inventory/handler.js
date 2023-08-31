@@ -2,7 +2,10 @@ const inventoryService = require("../../service/mysql/inventoryService");
 const nameItemService = require("../../service/mysql/nameItemService");
 const userService = require("../../service/mysql/userService");
 const workUnitService = require("../../service/mysql/workUnitService");
-const inventorySchema = require("../../validation/inventorySchema");
+const {
+  inventorySchema,
+  addItemToRoom,
+} = require("../../validation/inventorySchema");
 const { validation } = require("../../validation/validate");
 
 module.exports = {
@@ -86,15 +89,31 @@ module.exports = {
   handlerGetAllAssignedItemsByWorkUnit: async (req, res, next) => {
     try {
       const { uuid } = req.user;
-      const user = await userService.getUserByUUID(uuid);
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
       const data = await inventoryService.getAllItemAssignedByWorkUnit({
-        id_work_unit: user.id_work_unit,
+        id_work_unit: id_work_unit,
       });
 
       res.status(200).json({
         status: "success",
         message: "successfully get All Assigned Items",
         data: data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerAssignItemToRoom: async (req, res, next) => {
+    try {
+      const { uuid } = req.user;
+      const { id } = req.params;
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+      const { id_room } = validation(addItemToRoom, req.body);
+      await inventoryService.assignItemToRoom({ id, id_room, id_work_unit });
+
+      res.status(200).json({
+        status: "success",
+        message: "successfully assign Item to Room",
       });
     } catch (error) {
       next(error);

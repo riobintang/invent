@@ -43,6 +43,16 @@ function createModelInventory(sequelize, DataTypes) {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      id_room: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "rooms",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

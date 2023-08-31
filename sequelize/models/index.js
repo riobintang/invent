@@ -115,13 +115,24 @@ sequelize.models.Inventory.hasMany(sequelize.models.InventCondition, {
   targetKey: "id",
 });
 
+// Status Inventory
 sequelize.models.Inventory.belongsTo(sequelize.models.ConditionItem, {
   foreignKey: "status",
   targetKey: "id",
 });
-
 sequelize.models.ConditionItem.hasMany(sequelize.models.Inventory, {
   foreignKey: "status",
+  sourceKey: "id",
+});
+
+// Room Inventory
+sequelize.models.Inventory.belongsTo(sequelize.models.Room, {
+  foreignKey: "id_room",
+  targetKey: "id",
+});
+
+sequelize.models.Room.hasMany(sequelize.models.Inventory, {
+  foreignKey: "id_room",
   sourceKey: "id",
 });
 
@@ -134,9 +145,6 @@ sequelize.models.ConditionItem.hasMany(sequelize.models.InventCondition, {
   foreignKey: "id_condition",
   targetKey: "id",
 });
-
-
-
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

@@ -5,18 +5,20 @@ const {
   Added_item,
   ConditionItem,
   NameItem,
+  Room,
   sequelize,
 } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 const { addItemCondition } = require("./inventCondition");
 const nameItemService = require("./nameItemService");
+const { checkRoom } = require("./roomService");
 
-const foundInventory = async (
+const foundInventory = async ({
   id = null,
   codeInvent = null,
   option = { op: "count" || "found", qty },
-  errorString = "Code has been used"
-) => {
+  errorString = "Code has been used",
+}) => {
   const item = await Inventory.count({
     where: {
       [Op.or]: [
@@ -108,19 +110,18 @@ const getAll = async ({ name_item = null, id_work_unit = null }) => {
     include: [
       { model: NameItem, attributes: ["name"] },
       { model: ConditionItem, attributes: ["name"] },
+      { model: Room, attributes: ["name"] },
     ],
   });
- 
-
-
 
   return items.map((item) => {
     return {
       codeInvent: item.codeInvent,
       nameItem: item.NameItem.name,
       condition: item.ConditionItem.name,
+      room: item.Room?.name || null,
     };
-  });;
+  });
 };
 
 const getAllItemUnsigned = async () => {
@@ -152,10 +153,41 @@ const getAllItemAssignedByWorkUnit = async ({ id_work_unit }) => {
   return data;
 };
 
+const assignItemToRoom = async ({ id, id_room, id_work_unit }) => {
+  await checkRoom({ id: id_room, id_work_unit });
+
+  const itemExist = await Inventory.findByPk(id);
+  if (!itemExist) {
+    throw new ResponseError(400, "Item not found");
+  }
+
+  return await itemExist.update({
+    id_room: id_room,
+  });
+};
+
+const changeStatusItem = async ({ id, status, id_work_unit }) => {
+  const item = await Inventory.findOne({
+    where: {
+      id,
+      id_work_unit,
+    },
+  });
+  if (!item) {
+    throw new ResponseError(400, "Item not found");
+  }
+
+  return await item.update({
+    status,
+  });
+};
+
 module.exports = {
   getAllInventoryAddedWorkUnit: getAll,
   addInventory: add,
   foundInventory,
   getAllItemUnsigned,
   getAllItemAssignedByWorkUnit,
+  assignItemToRoom,
+  changeStatusItem,
 };

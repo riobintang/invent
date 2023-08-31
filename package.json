@@ -5,8 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www.js",
-    "all-db": "cd ./sequelize && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all",
-    "migrate-db": "cd ./sequelize && npx sequelize db:migrate"
+    "all-db": "cd ./sequelize && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "migrate-db": "cd ./sequelize && npx sequelize-cli db:migrate",
+    "drop-db": "cd ./sequelize && npx sequelize-cli db:drop"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

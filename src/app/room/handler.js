@@ -6,13 +6,13 @@ const { editRoomDataSchema } = require("../../validation/roomSchema");
 const { validation } = require("../../validation/validate");
 
 module.exports = {
-  getAllRoomByWorkUnit: async (req, res, next) => {
+  getAllRoomByWorkUnitHandler: async (req, res, next) => {
     try {
       const { uuid } = req.user;
-      const { Work_unit } = await userService.getUserByUUID(uuid);
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
 
       const data = await roomService.getAllRoomWorkUnit({
-        id_work_unit: Work_unit.id,
+        id_work_unit,
       });
       res.status(200).json({
         status: "success",
@@ -23,11 +23,12 @@ module.exports = {
       next(error);
     }
   },
-  addRoom: async (req, res, next) => {
+  addRoomHandler: async (req, res, next) => {
     try {
-      const requestData = validation(roomDataSchema, req.body);
-
-      await roomService.add(requestData);
+      const { uuid } = req.user;
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+      const { name } = validation(roomDataSchema, req.body);
+      await roomService.add({ name, id_work_unit });
       res.status(201).json({
         status: "success",
         message: "successfully add Room",
@@ -36,11 +37,21 @@ module.exports = {
       next(error);
     }
   },
-  editRoom: async (req, res, next) => {
+  editRoomHandler: async (req, res, next) => {
     try {
-        const requestData = validation(roomDataSchema, req.body);
+      const { id } = req.params;
+      const { uuid } = req.user;
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+      const { name } = validation(roomDataSchema, req.body);
+
+      await roomService.edit({ id, name, id_work_unit });
+
+      res.status(200).json({
+        status: "success",
+        message: "successfully update Room",
+      });
     } catch (error) {
-        next(error);
+      next(error);
     }
-  }
+  },
 };
