@@ -39,12 +39,12 @@ module.exports = {
   },
   editRoomHandler: async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { code_room } = req.params;
       const { uuid } = req.user;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
       const { name, code } = validation(roomDataSchema, req.body);
 
-      await roomService.edit({ id, name, code, id_work_unit });
+      await roomService.edit({ code_old: code_room, name, code, id_work_unit });
 
       res.status(200).json({
         status: "success",

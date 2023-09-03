@@ -7,6 +7,6 @@ const router = require('express').Router();
 
 router.get('/', authToken, getAllRoomByWorkUnitHandler);
 router.post('/', authToken, addRoomHandler);
-router.put('/:id', authToken, editRoomHandler);
+router.put('/:code_room', authToken, editRoomHandler);
 
 module.exports = router;

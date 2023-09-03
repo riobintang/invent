@@ -18,27 +18,38 @@ const foundInventory = async ({
   id = null,
   codeInvent = null,
   option = { op: "count" || "found", qty },
-  errorString = "Code has been used",
 }) => {
-  const item = await Inventory.count({
-    where: {
-      [Op.or]: [
-        {
-          id: id,
-        },
-        {
-          codeInvent: codeInvent,
-        },
-      ],
-    },
-  });
-
   if (option.op === "count") {
-    if (item > option.count) throw new ResponseError(400, errorString);
+    const item = await Inventory.count({
+      where: {
+        [Op.or]: [
+          {
+            id: id,
+          },
+          {
+            codeInvent: codeInvent,
+          },
+        ],
+      },
+    });
+    if (item > option.qty) throw new ResponseError(400, "Code has been used");
   } else if (option.op === "found") {
-    if (item !== option.count) {
-      throw new ResponseError(400, errorString);
+    const item = await Inventory.findOne({
+      where: {
+        [Op.or]: [
+          {
+            id: id,
+          },
+          {
+            codeInvent: codeInvent,
+          },
+        ],
+      },
+    });
+    if (!item) {
+      throw new ResponseError(400, "Item not found");
     }
+    return item;
   }
 
   return;
@@ -53,7 +64,7 @@ const add = async ({ quantity, id_name_item, id_work_unit }) => {
       type: sequelize.QueryTypes.SELECT,
     }
   );
-  console.log(dataQty);
+
   if (!dataQty) {
     throw new ResponseError(400, "Item not found");
   }
