@@ -8,6 +8,10 @@ function createModelRoom(sequelize, DataTypes) {
         autoIncrement: true,
         primaryKey: true,
       },
+      code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       name: {
         type: DataTypes.STRING,
         allowNull: false,

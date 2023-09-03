@@ -7,7 +7,7 @@ const inventorySchema = Joi.object({
 });
 
 const addItemToRoom = Joi.object({
-  id_room: Joi.number().min(1).required(),
+  code: Joi.string().min(1).required(),
 });
 
 module.exports = { inventorySchema, addItemToRoom };

@@ -27,8 +27,8 @@ module.exports = {
     try {
       const { uuid } = req.user;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
-      const { name } = validation(roomDataSchema, req.body);
-      await roomService.add({ name, id_work_unit });
+      const { name, code } = validation(roomDataSchema, req.body);
+      await roomService.add({ name, code, id_work_unit });
       res.status(201).json({
         status: "success",
         message: "successfully add Room",
@@ -42,9 +42,9 @@ module.exports = {
       const { id } = req.params;
       const { uuid } = req.user;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
-      const { name } = validation(roomDataSchema, req.body);
+      const { name, code } = validation(roomDataSchema, req.body);
 
-      await roomService.edit({ id, name, id_work_unit });
+      await roomService.edit({ id, name, code, id_work_unit });
 
       res.status(200).json({
         status: "success",

@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { Room } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
 
@@ -6,29 +7,41 @@ const getAllRoomWorkUnit = async ({ id_work_unit }) => {
     where: {
       id_work_unit,
     },
-    attributes: ["id", "name"],
+    attributes: ["code", "name"],
   });
 };
 
-const addRoom = async ({ name, id_work_unit }) => {
+const addRoom = async ({ code, name, id_work_unit }) => {
   return await Room.create({
+    code,
     name,
     id_work_unit,
   });
 };
 
-const editRoom = async ({ id, name, id_work_unit }) => {
-  const room = await checkRoom({id, id_work_unit});
+const editRoom = async ({ id, code, name, id_work_unit }) => {
+  const room = await checkRoom({ id, id_work_unit });
   return await room.update({
     name,
+    code,
   });
 };
 
-const checkRoom = async ({ id, id_work_unit }) => {
+const checkRoom = async ({ id, code, id_work_unit }) => {
+  const arr = [];
+  if (id) {
+    arr.push({id});
+  }
+  if (code) {
+    arr.push({code});
+  }
+  if (id_work_unit) {
+    arr.push({id_work_unit});
+  }
+
   const room = await Room.findOne({
     where: {
-      id: id,
-      id_work_unit: id_work_unit,
+      [Op.and]:arr,
     },
   });
   if (!room) {
@@ -41,5 +54,5 @@ module.exports = {
   getAllRoomWorkUnit,
   add: addRoom,
   edit: editRoom,
-  checkRoom
+  checkRoom,
 };

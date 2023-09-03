@@ -12,6 +12,7 @@ const ResponseError = require("../../util/responseError");
 const { addItemCondition } = require("./inventCondition");
 const nameItemService = require("./nameItemService");
 const { checkRoom } = require("./roomService");
+const roomService = require("./roomService");
 
 const foundInventory = async ({
   id = null,
@@ -90,10 +91,14 @@ const add = async ({ quantity, id_name_item, id_work_unit }) => {
     // await t.rollback;
   }
 };
-
-const getAll = async ({ name_item = null, id_work_unit = null }) => {
+//get all with model nameitem, conditionitem, room.
+const getAll = async ({
+  name_item = null,
+  id_work_unit = null,
+  code_room = null,
+}) => {
   const arrItems = [];
-
+  const arrRoom = [];
   if (name_item) {
     const id_name_item = await nameItemService.getNameItemByName(name_item);
     arrItems.push({ id_name_item: id_name_item.id });
@@ -101,7 +106,9 @@ const getAll = async ({ name_item = null, id_work_unit = null }) => {
   if (id_work_unit) {
     arrItems.push({ id_work_unit });
   }
-
+  if (code_room) {
+    arrRoom.push({ code: code_room });
+  }
   const items = await Inventory.findAll({
     where: {
       [Op.and]: arrItems,
@@ -110,10 +117,16 @@ const getAll = async ({ name_item = null, id_work_unit = null }) => {
     include: [
       { model: NameItem, attributes: ["name"] },
       { model: ConditionItem, attributes: ["name"] },
-      { model: Room, attributes: ["name"] },
+      {
+        model: Room,
+        attributes: ["name", "code"],
+        where: {
+          [Op.and]: arrRoom,
+        },
+      },
     ],
   });
-
+  // console.log(items)
   return items.map((item) => {
     return {
       codeInvent: item.codeInvent,
@@ -142,19 +155,19 @@ const getAllItemUnsigned = async () => {
   return newResult;
 };
 
-const getAllItemAssignedByWorkUnit = async ({ id_work_unit }) => {
-  const data = await Inventory.findAll({
-    where: {
-      id_work_unit,
-    },
-    attributes: { exclude: ["createdAt", "updatedAt"] },
-  });
+// const getAllItemAssignedByWorkUnit = async ({ id_work_unit }) => {
+//   const data = await Inventory.findAll({
+//     where: {
+//       id_work_unit,
+//     },
+//     attributes: { exclude: ["createdAt", "updatedAt"] },
+//   });
 
-  return data;
-};
+//   return data;
+// };
 
-const assignItemToRoom = async ({ id, id_room, id_work_unit }) => {
-  await checkRoom({ id: id_room, id_work_unit });
+const assignItemToRoom = async ({ id, code, id_work_unit }) => {
+  const room = await checkRoom({ code: code, id_work_unit });
 
   const itemExist = await Inventory.findByPk(id);
   if (!itemExist) {
@@ -162,7 +175,7 @@ const assignItemToRoom = async ({ id, id_room, id_work_unit }) => {
   }
 
   return await itemExist.update({
-    id_room: id_room,
+    id_room: room.id,
   });
 };
 
@@ -182,12 +195,49 @@ const changeStatusItem = async ({ id, status, id_work_unit }) => {
   });
 };
 
+const getItemsListByWorkUnit = async ({ id_work_unit }) => {
+  const data = await sequelize.query(
+    "SELECT ni.name, COUNT(inventories.id_name_item) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item WHERE inventories.id_room IS NULL AND inventories.id_work_unit = :id_work_unit GROUP BY ni.id, ni.code, ni.name, ni.quantity;",
+    {
+      replacements: { id_work_unit: id_work_unit },
+      type: sequelize.QueryTypes.SELECT,
+    }
+  );
+
+  return data;
+};
+
+const getItemsConditionList = async ({ id_work_unit, code_room = null }) => {
+  var room_rule = "IS NULL";
+  if (code_room) {
+    const { id } = await roomService.checkRoom({
+      code: code_room,
+      id_work_unit,
+    });
+    room_rule = `= ${id}`;
+  }
+  const data = await sequelize.query(
+    "SELECT ni.name, COUNT(CASE WHEN inventories.status = 1 THEN 1 ELSE null END) AS baik, COUNT(CASE WHEN inventories.status = 2 THEN 1 ELSE null END) AS buruk, COUNT(inventories.id_name_item) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item WHERE inventories.id_room " +
+      room_rule +
+      " AND inventories.id_work_unit = 2 GROUP BY ni.id, ni.code, ni.name, ni.quantity;",
+    {
+      replacements: {
+        id_work_unit: id_work_unit,
+      },
+      type: sequelize.QueryTypes.SELECT,
+    }
+  );
+  return data;
+};
+
 module.exports = {
   getAllInventoryAddedWorkUnit: getAll,
   addInventory: add,
   foundInventory,
   getAllItemUnsigned,
-  getAllItemAssignedByWorkUnit,
+  // getAllItemAssignedByWorkUnit,
   assignItemToRoom,
   changeStatusItem,
+  getItemsListByWorkUnit,
+  getItemsConditionList,
 };

@@ -1,5 +1,6 @@
 const inventoryService = require("../../service/mysql/inventoryService");
 const nameItemService = require("../../service/mysql/nameItemService");
+const roomService = require("../../service/mysql/roomService");
 const userService = require("../../service/mysql/userService");
 const workUnitService = require("../../service/mysql/workUnitService");
 const {
@@ -14,10 +15,10 @@ module.exports = {
       const { uuid } = req.user;
       const { nameitem } = req.query;
 
-      const userWorkUnit = await userService.getUserByUUID(uuid);
-      const data = await inventoryService.getAllInventoryAddedWorkUnit({
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+      const data = await inventoryService.getItemsListByWorkUnit({
         name_item: nameitem,
-        id_work_unit: userWorkUnit.Work_unit.id,
+        id_work_unit: id_work_unit,
       });
       res.status(200).json({
         status: "success",
@@ -86,34 +87,75 @@ module.exports = {
       next(error);
     }
   },
-  handlerGetAllAssignedItemsByWorkUnit: async (req, res, next) => {
-    try {
-      const { uuid } = req.user;
-      const { id_work_unit } = await userService.getUserByUUID(uuid);
-      const data = await inventoryService.getAllItemAssignedByWorkUnit({
-        id_work_unit: id_work_unit,
-      });
+  // handlerGetAllAssignedItemsByWorkUnit: async (req, res, next) => {
+  //   try {
+  //     const { uuid } = req.user;
+  //     const { id_work_unit } = await userService.getUserByUUID(uuid);
+  //     const data = await inventoryService.getAllItemAssignedByWorkUnit({
+  //       id_work_unit: id_work_unit,
+  //     });
 
-      res.status(200).json({
-        status: "success",
-        message: "successfully get All Assigned Items",
-        data: data,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
+  //     res.status(200).json({
+  //       status: "success",
+  //       message: "successfully get All Assigned Items",
+  //       data: data,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // },
   handlerAssignItemToRoom: async (req, res, next) => {
     try {
       const { uuid } = req.user;
       const { id } = req.params;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
-      const { id_room } = validation(addItemToRoom, req.body);
-      await inventoryService.assignItemToRoom({ id, id_room, id_work_unit });
+      const { code } = validation(addItemToRoom, req.body);
+      console.log(id);
+      await inventoryService.assignItemToRoom({ id, code, id_work_unit });
 
       res.status(200).json({
         status: "success",
         message: "successfully assign Item to Room",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerGetItemsByRoom: async (req, res, next) => {
+    try {
+      const { uuid } = req.user;
+      const { code_room } = req.params;
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+      const data = await inventoryService.getAllInventoryAddedWorkUnit({
+        id_work_unit,
+        code_room,
+      });
+
+      res.status(200).json({
+        status: "success",
+        message: "successfully get Items",
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerGetConditionItems: async (req, res, next) => {
+    try {
+      const { uuid } = req.user;
+      const { code_room } = req.query;
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+
+
+      
+      const data = await inventoryService.getItemsConditionList({
+        id_work_unit,
+        code_room,
+      });
+      res.status(200).json({
+        status: "success",
+        message: "successfully get Items",
+        data,
       });
     } catch (error) {
       next(error);
