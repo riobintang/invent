@@ -24,11 +24,11 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_name_item: {
+      id_added_item: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "name_items",
+          model: "added_items",
           key: "id",
         },
         onUpdate: "CASCADE",

@@ -85,13 +85,13 @@ sequelize.models.NameItem.hasMany(sequelize.models.Added_item, {
 });
 
 // Inventory and NameItem
-sequelize.models.Inventory.belongsTo(sequelize.models.NameItem, {
-  foreignKey: "id_name_item",
+sequelize.models.Inventory.belongsTo(sequelize.models.Added_item, {
+  foreignKey: "id_added_item",
   sourceKey: "id",
 });
 
-sequelize.models.NameItem.hasMany(sequelize.models.Inventory, {
-  foreignKey: "id_name_item",
+sequelize.models.Added_item.hasMany(sequelize.models.Inventory, {
+  foreignKey: "id_added_item",
   targetKey: "id",
 });
 

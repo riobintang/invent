@@ -6,6 +6,7 @@ const {
   ConditionItem,
   NameItem,
   Room,
+  Type,
   sequelize,
 } = require("../../../sequelize/models");
 const ResponseError = require("../../util/responseError");
@@ -13,6 +14,8 @@ const { addItemCondition } = require("./inventCondition");
 const nameItemService = require("./nameItemService");
 const { checkRoom } = require("./roomService");
 const roomService = require("./roomService");
+const addedItemServices = require("./addedItemServices");
+const conditionItemService = require("./conditionItemService");
 
 const foundInventory = async ({
   id = null,
@@ -83,10 +86,10 @@ const add = async ({ quantity, id_name_item, id_work_unit }) => {
     throw new ResponseError(400, `Max quantity is ${dataQty[0].total}`);
   }
   try {
-    for (var x = qtyLatest + 1; x <= quantity + qtyLatest; x++) {
+    for (var loopVar = qtyLatest + 1; loopVar <= quantity + qtyLatest; loopVar++) {
       const insertInvent = await Inventory.create(
         {
-          codeInvent: x.toString().padStart(3, "0"),
+          codeInvent: loopVar.toString().padStart(3, "0"),
           id_name_item,
           id_work_unit,
         }
@@ -104,29 +107,43 @@ const add = async ({ quantity, id_name_item, id_work_unit }) => {
 };
 //get all with model nameitem, conditionitem, room.
 const getAll = async ({
-  name_item = null,
+  // name_item = null,
   id_work_unit = null,
   code_room = null,
 }) => {
   const arrItems = [];
   const arrRoom = [];
-  if (name_item) {
-    const id_name_item = await nameItemService.getNameItemByName(name_item);
-    arrItems.push({ id_name_item: id_name_item.id });
-  }
+  // if (name_item) {
+  //   const id_name_item = await nameItemService.getNameItemByName(name_item);
+  //   arrItems.push({ id_name_item: id_name_item.id });
+  // }
   if (id_work_unit) {
     arrItems.push({ id_work_unit });
   }
+
   if (code_room) {
     arrRoom.push({ code: code_room });
   }
+
   const items = await Inventory.findAll({
     where: {
       [Op.and]: arrItems,
     },
-    attributes: ["codeInvent"],
+    attributes: ["codeInvent", "id"],
     include: [
-      { model: NameItem, attributes: ["name"] },
+      {
+        model: Added_item,
+        include: [
+          { 
+            model: NameItem, attributes: ["name", "code"], 
+            include: [
+              {
+                model: Type
+              }
+            ]
+          }
+        ],
+      },
       { model: ConditionItem, attributes: ["name"] },
       {
         model: Room,
@@ -135,36 +152,39 @@ const getAll = async ({
           [Op.and]: arrRoom,
         },
       },
+      { model: Work_unit },
     ],
   });
-  // console.log(items)
+  
   return items.map((item) => {
+    console.log(item.Added_item)
     return {
-      codeInvent: item.codeInvent,
-      nameItem: item.NameItem.name,
+      id: item.id,
+      codeInvent: item.Added_item.NameItem.Type.code + "." + item.Work_unit.code + ".Smkmuh3." + item.Added_item.NameItem.code + "." + item.codeInvent,
+      nameItem: item.Added_item.NameItem.name,
       condition: item.ConditionItem.name,
       room: item.Room?.name || null,
     };
   });
 };
 
-const getAllItemUnsigned = async () => {
-  const data = await sequelize.query(
-    "SELECT ni.id, ni.code, ni.name, ni.quantity, COUNT(inventories.id_name_item) AS assigned, (ni.quantity - COUNT(inventories.id_name_item)) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item GROUP BY ni.id, ni.code, ni.name, ni.quantity HAVING (ni.quantity - COUNT(inventories.id_name_item)) > 0;",
-    { type: sequelize.QueryTypes.SELECT }
-  );
+// const getAllItemUnsigned = async () => {
+//   const data = await sequelize.query(
+//     "SELECT ni.id, ni.code, ni.name, ni.quantity, COUNT(inventories.id_name_item) AS assigned, (ni.quantity - COUNT(inventories.id_name_item)) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item GROUP BY ni.id, ni.code, ni.name, ni.quantity HAVING (ni.quantity - COUNT(inventories.id_name_item)) > 0;",
+//     { type: sequelize.QueryTypes.SELECT }
+//   );
 
-  const newResult = data.map((item) => {
-    return {
-      id_name_item: item.id,
-      code: item.code,
-      name: item.name,
-      qty: item.quantity - item.assigned,
-    };
-  });
+//   const newResult = data.map((item) => {
+//     return {
+//       id_name_item: item.id,
+//       code: item.code,
+//       name: item.name,
+//       qty: item.quantity - item.assigned,
+//     };
+//   });
 
-  return newResult;
-};
+//   return newResult;
+// };
 
 // const getAllItemAssignedByWorkUnit = async ({ id_work_unit }) => {
 //   const data = await Inventory.findAll({
@@ -208,7 +228,7 @@ const changeStatusItem = async ({ id, status, id_work_unit }) => {
 
 const getItemsListByWorkUnit = async ({ id_work_unit }) => {
   const data = await sequelize.query(
-    "SELECT ni.name, COUNT(inventories.id_name_item) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item WHERE inventories.id_room IS NULL AND inventories.id_work_unit = :id_work_unit GROUP BY ni.id, ni.code, ni.name, ni.quantity;",
+    "SELECT name_items.name, COUNT(CASE WHEN inventories.status = 1 THEN 1 ELSE null END) AS baik, COUNT(CASE WHEN inventories.status = 2 THEN 1 ELSE null END) AS buruk, COUNT(inventories.id_added_item) AS total, ai.added_date AS date FROM name_items JOIN `added_items` ai ON name_items.id = ai.id_name_item LEFT JOIN `inventories` ON ai.id = inventories.id_added_item WHERE inventories.id_room IS NULL AND inventories.id_work_unit = :id_work_unit GROUP BY ai.id;",
     {
       replacements: { id_work_unit: id_work_unit },
       type: sequelize.QueryTypes.SELECT,
@@ -219,18 +239,18 @@ const getItemsListByWorkUnit = async ({ id_work_unit }) => {
 };
 
 const getItemsConditionList = async ({ id_work_unit, code_room = null }) => {
-  var room_rule = "IS NULL";
+  var room_rule = "";
   if (code_room) {
     const { id } = await roomService.checkRoom({
       code: code_room,
       id_work_unit,
     });
-    room_rule = `= ${id}`;
+    room_rule = `AND inventories.id_room = ${id}`;
   }
   const data = await sequelize.query(
-    "SELECT ni.name, COUNT(CASE WHEN inventories.status = 1 THEN 1 ELSE null END) AS baik, COUNT(CASE WHEN inventories.status = 2 THEN 1 ELSE null END) AS buruk, COUNT(inventories.id_name_item) AS total FROM `name_items` ni LEFT JOIN `inventories` ON ni.id = inventories.id_name_item WHERE inventories.id_room " +
+    "SELECT name_items.name, COUNT(CASE WHEN inventories.status = 1 THEN 1 ELSE null END) AS baik, COUNT(CASE WHEN inventories.status = 2 THEN 1 ELSE null END) AS buruk, COUNT(inventories.id_added_item) AS total, ai.added_date AS date FROM name_items JOIN `added_items` ai ON name_items.id = ai.id_name_item LEFT JOIN `inventories` ON ai.id = inventories.id_added_item WHERE inventories.id_work_unit = :id_work_unit " +
       room_rule +
-      " AND inventories.id_work_unit = 2 GROUP BY ni.id, ni.code, ni.name, ni.quantity;",
+      " GROUP BY ai.id;",
     {
       replacements: {
         id_work_unit: id_work_unit,
@@ -241,14 +261,95 @@ const getItemsConditionList = async ({ id_work_unit, code_room = null }) => {
   return data;
 };
 
+const addToInvent = async ({ id_added_item, id_work_unit, quantity }) => {
+  const dataQty = await sequelize.query(
+    "SELECT ai.id, name_items.name, ai.quantity-COUNT(inventories.id_added_item) AS total, ai.added_date AS year FROM `name_items` JOIN `added_items` ai ON name_items.id = ai.id_name_item LEFT JOIN `inventories` ON ai.id = inventories.id_added_item WHERE ai.id = :id_added_item GROUP BY ai.id;",
+    {
+      replacements: { id_added_item: id_added_item },
+      type: sequelize.QueryTypes.SELECT,
+    }
+  );
+
+  if (!dataQty) {
+    throw new ResponseError(400, "Item not found");
+  }
+
+  const countInvent = await Inventory.findOne({
+    where: {
+      id_added_item: id_added_item,
+      id_work_unit: id_work_unit,
+    },
+    order: [["codeInvent", "DESC"]],
+  });
+  const qtyLatest = parseInt(countInvent?.codeInvent || 0);
+  console.log(qtyLatest);
+  // const { id_name_item } = await addedItemServices.getItem(id_added_item);
+  // const countInvent = await sequelize.query(
+  //   "SELECT COUNT(inventories.id) AS total FROM name_items JOIN added_items ON name_items.id = added_items.id_name_item JOIN inventories ON inventories.id_added_item = added_items.id WHERE name_items.id = :id_name_item;",
+  //   {
+  //     replacements: {
+  //       id_name_item,
+  //     },
+  //     type: sequelize.QueryTypes.SELECT,
+  //   }
+  // );
+  // const qtyLatest = countInvent[0].total || 0;
+
+  if (quantity > dataQty[0].total) {
+    throw new ResponseError(400, `Max quantity is ${dataQty[0].total}`);
+  }
+
+  try {
+    for (var x = qtyLatest + 1; x <= quantity + qtyLatest; x++) {
+      await Inventory.create(
+        {
+          codeInvent: x.toString().padStart(3, "0"),
+          id_added_item,
+          id_work_unit,
+        }
+        // {
+        //   transaction: t,
+        // }
+      );
+      // await addItemCondition(insertInvent.id, 1, 1);
+    }
+    // return t.commit();
+    return;
+  } catch (error) {
+    // await t.rollback;
+    return error;
+  }
+};
+
+const updateStatusItem = async ({ id, id_work_unit, status }) => {
+  const item = await Inventory.findOne({
+    where: {
+      id,
+      id_work_unit,
+    },
+  });
+  console.log(id);
+  if (!item) {
+    throw new ResponseError(400, "Item not found");
+  }
+  // check status exist
+  await conditionItemService.getById(status);
+  console.log(item);
+  return await item.update({
+    status,
+  });
+};
+
 module.exports = {
   getAllInventoryAddedWorkUnit: getAll,
-  addInventory: add,
+  // addInventory: add,
   foundInventory,
-  getAllItemUnsigned,
+  // getAllItemUnsigned,
   // getAllItemAssignedByWorkUnit,
   assignItemToRoom,
   changeStatusItem,
   getItemsListByWorkUnit,
   getItemsConditionList,
+  addToInvent,
+  updateStatusItem,
 };

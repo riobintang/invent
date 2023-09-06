@@ -36,7 +36,7 @@ module.exports = {
         requestData.quantity,
         requestData.added_date,
         requestData.id_name_item,
-        requestData.description,
+        requestData.description
       );
 
       res.status(201).json({
@@ -47,4 +47,23 @@ module.exports = {
       next(error);
     }
   },
+  handlerGetListItemDistribution: async (req, res, next) => {
+    try {
+      const data = await addedItemServices.getListUnassignItem();
+      res.status(200).json({
+        status: 'success',
+        message: 'successfully get Items',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  // handlerPostItemDistributionToInvent: async (req, res, next) => {
+  //   try {
+      
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 };

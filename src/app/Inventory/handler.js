@@ -6,6 +6,7 @@ const workUnitService = require("../../service/mysql/workUnitService");
 const {
   inventorySchema,
   addItemToRoom,
+  updateStatusItem,
 } = require("../../validation/inventorySchema");
 const { validation } = require("../../validation/validate");
 
@@ -13,11 +14,10 @@ module.exports = {
   handlerGetAllInventoryByWorkUnit: async (req, res, next) => {
     try {
       const { uuid } = req.user;
-      const { nameitem } = req.query;
+      // const { nameitem } = req.query;
 
       const { id_work_unit } = await userService.getUserByUUID(uuid);
       const data = await inventoryService.getItemsListByWorkUnit({
-        name_item: nameitem,
         id_work_unit: id_work_unit,
       });
       res.status(200).json({
@@ -32,8 +32,8 @@ module.exports = {
   handlerAddInventory: async (req, res, next) => {
     try {
       const requestData = validation(inventorySchema, req.body);
-
-      await inventoryService.addInventory(requestData);
+      console.log(requestData);
+      await inventoryService.addToInvent(requestData);
       res.status(201).json({
         status: "success",
         message: "successfully assign items to work unit",
@@ -42,39 +42,39 @@ module.exports = {
       next(error);
     }
   },
-  handlerGetAllInventory: async (req, res, next) => {
-    try {
-      const { unit } = req.query;
-      var id_work_unit = null;
-      if (unit) {
-        id_work_unit = await workUnitService.searchWorkUnit(
-          (nameWorkUnit = unit)
-        );
-      }
-      const data = await inventoryService.getAllInventory({ id_work_unit });
+  // handlerGetAllInventory: async (req, res, next) => {
+  //   try {
+  //     const { unit } = req.query;
+  //     var id_work_unit = null;
+  //     if (unit) {
+  //       id_work_unit = await workUnitService.searchWorkUnit(
+  //         (nameWorkUnit = unit)
+  //       );
+  //     }
+  //     const data = await inventoryService.getAllInventory({ id_work_unit });
 
-      res.status(200).json({
-        status: "success",
-        message: "successfully get Inventory",
-        data: data,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-  handlerGetAllUnsignedItems: async (req, res, next) => {
-    try {
-      const data = await inventoryService.getAllItemUnsigned();
+  //     res.status(200).json({
+  //       status: "success",
+  //       message: "successfully get Inventory",
+  //       data: data,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // },
+  // handlerGetAllUnsignedItems: async (req, res, next) => {
+  //   try {
+  //     const data = await inventoryService.getAllItemUnsigned();
 
-      res.status(200).json({
-        status: "success",
-        message: "successfully get All Total Items",
-        data: data,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
+  //     res.status(200).json({
+  //       status: "success",
+  //       message: "successfully get All Total Items",
+  //       data: data,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // },
   handlerAllItems: async (req, res, next) => {
     try {
       const data = await nameItemService.getAllNameItem();
@@ -124,8 +124,9 @@ module.exports = {
   handlerGetItemsByRoom: async (req, res, next) => {
     try {
       const { uuid } = req.user;
-      const { code_room } = req.params;
+      const { code_room } = req.query;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
+ 
       const data = await inventoryService.getAllInventoryAddedWorkUnit({
         id_work_unit,
         code_room,
@@ -146,8 +147,6 @@ module.exports = {
       const { code_room } = req.query;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
 
-
-      
       const data = await inventoryService.getItemsConditionList({
         id_work_unit,
         code_room,
@@ -156,6 +155,24 @@ module.exports = {
         status: "success",
         message: "successfully get Items",
         data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerUpdateStatusItem: async (req, res, next) => {
+    try {
+      const { uuid } = req.user;
+      const { id } = req.params;
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+      const requestData = validation(updateStatusItem, req.body);
+      requestData.id = id;
+      requestData.id_work_unit = id_work_unit;
+      console.log(requestData)
+      await inventoryService.updateStatusItem(requestData);
+      res.status(200).json({
+        status: "success",
+        message: "successfully update status Item",
       });
     } catch (error) {
       next(error);

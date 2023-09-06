@@ -23,11 +23,11 @@ function createModelInventory(sequelize, DataTypes) {
         onDelete: "CASCADE",
         defaultValue: 1,
       },
-      id_name_item: {
+      id_added_item: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "name_items",
+          model: "added_items",
           key: "id",
         },
         onUpdate: "CASCADE",
