@@ -23,7 +23,7 @@ router.get("/list", authToken, handlerGetItemsByRoom);
 router.get("/all", authToken, authAdmin, handlerAllItems);
 
 router.post("/", authToken, authAdmin, handlerAddInventory);
-router.post("/assign/:id", authToken, handlerAssignItemToRoom);
+router.post("/assign", authToken, handlerAssignItemToRoom);
 
 router.put("/:id", authToken, handlerUpdateStatusItem);
 

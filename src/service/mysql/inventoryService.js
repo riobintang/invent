@@ -86,7 +86,11 @@ const add = async ({ quantity, id_name_item, id_work_unit }) => {
     throw new ResponseError(400, `Max quantity is ${dataQty[0].total}`);
   }
   try {
-    for (var loopVar = qtyLatest + 1; loopVar <= quantity + qtyLatest; loopVar++) {
+    for (
+      var loopVar = qtyLatest + 1;
+      loopVar <= quantity + qtyLatest;
+      loopVar++
+    ) {
       const insertInvent = await Inventory.create(
         {
           codeInvent: loopVar.toString().padStart(3, "0"),
@@ -134,14 +138,15 @@ const getAll = async ({
       {
         model: Added_item,
         include: [
-          { 
-            model: NameItem, attributes: ["name", "code"], 
+          {
+            model: NameItem,
+            attributes: ["name", "code"],
             include: [
               {
-                model: Type
-              }
-            ]
-          }
+                model: Type,
+              },
+            ],
+          },
         ],
       },
       { model: ConditionItem, attributes: ["name"] },
@@ -155,12 +160,19 @@ const getAll = async ({
       { model: Work_unit },
     ],
   });
-  
+
   return items.map((item) => {
-    console.log(item.Added_item)
+    console.log(item.Added_item);
     return {
       id: item.id,
-      codeInvent: item.Added_item.NameItem.Type.code + "." + item.Work_unit.code + ".Smkmuh3." + item.Added_item.NameItem.code + "." + item.codeInvent,
+      codeInvent:
+        item.Added_item.NameItem.Type.code +
+        "." +
+        item.Work_unit.code +
+        ".Smkmuh3." +
+        item.Added_item.NameItem.code +
+        "." +
+        item.codeInvent,
       nameItem: item.Added_item.NameItem.name,
       condition: item.ConditionItem.name,
       room: item.Room?.name || null,
@@ -197,17 +209,51 @@ const getAll = async ({
 //   return data;
 // };
 
-const assignItemToRoom = async ({ id, code, id_work_unit }) => {
+const assignItemToRoom = async ({
+  quantity,
+  id_added_item,
+  code,
+  id_work_unit,
+}) => {
   const room = await checkRoom({ code: code, id_work_unit });
+  if (!room) {
+    throw new ResponseError(400, "Room not found");
+  }
 
-  const itemExist = await Inventory.findByPk(id);
+  const itemExist = await Inventory.count({
+    where: {
+      id_added_item,
+      id_work_unit,
+      status: 1,
+      id_room: {
+        [Op.is]: null,
+      },
+    },
+  });
+
   if (!itemExist) {
     throw new ResponseError(400, "Item not found");
   }
+  if (quantity > itemExist) {
+    throw new ResponseError(400, `Max quantity is ${itemExist}`);
+  }
 
-  return await itemExist.update({
-    id_room: room.id,
-  });
+  // return 0;
+  return await Inventory.update(
+    {
+      id_room: room.id,
+    },
+    {
+      where: {
+        id_added_item,
+        id_work_unit,
+        status: 1,
+        id_room: {
+          [Op.is]: null,
+        },
+      },
+    }
+  );
 };
 
 const changeStatusItem = async ({ id, status, id_work_unit }) => {
@@ -228,7 +274,7 @@ const changeStatusItem = async ({ id, status, id_work_unit }) => {
 
 const getItemsListByWorkUnit = async ({ id_work_unit }) => {
   const data = await sequelize.query(
-    "SELECT name_items.name, COUNT(CASE WHEN inventories.status = 1 THEN 1 ELSE null END) AS baik, COUNT(CASE WHEN inventories.status = 2 THEN 1 ELSE null END) AS buruk, COUNT(inventories.id_added_item) AS total, ai.added_date AS date FROM name_items JOIN `added_items` ai ON name_items.id = ai.id_name_item LEFT JOIN `inventories` ON ai.id = inventories.id_added_item WHERE inventories.id_room IS NULL AND inventories.id_work_unit = :id_work_unit GROUP BY ai.id;",
+    "SELECT inventories.id_added_item, name_items.name, COUNT(inventories.id_added_item) AS total, ai.added_date AS date FROM name_items JOIN `added_items` ai ON name_items.id = ai.id_name_item LEFT JOIN `inventories` ON ai.id = inventories.id_added_item WHERE inventories.id_room IS NULL AND inventories.id_work_unit = :id_work_unit GROUP BY ai.id;",
     {
       replacements: { id_work_unit: id_work_unit },
       type: sequelize.QueryTypes.SELECT,

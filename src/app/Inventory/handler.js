@@ -107,11 +107,11 @@ module.exports = {
   handlerAssignItemToRoom: async (req, res, next) => {
     try {
       const { uuid } = req.user;
-      const { id } = req.params;
+      // const { id } = req.params;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
-      const { code } = validation(addItemToRoom, req.body);
-      console.log(id);
-      await inventoryService.assignItemToRoom({ id, code, id_work_unit });
+      const { code, id_added_item, quantity } = validation(addItemToRoom, req.body);
+      // console.log(id);
+      await inventoryService.assignItemToRoom({ id_added_item, quantity, code, id_work_unit });
 
       res.status(200).json({
         status: "success",
