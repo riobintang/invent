@@ -239,11 +239,8 @@ const assignItemToRoom = async ({
   }
 
   // return 0;
-  return await Inventory.update(
-    {
-      id_room: room.id,
-    },
-    {
+  for (var x = 0; x < quantity; x++) {
+    const value = await Inventory.findOne({
       where: {
         id_added_item,
         id_work_unit,
@@ -252,8 +249,13 @@ const assignItemToRoom = async ({
           [Op.is]: null,
         },
       },
-    }
-  );
+    });
+
+    await value.update({
+      id_room: room.id,
+    });
+  }
+  return;
 };
 
 const changeStatusItem = async ({ id, status, id_work_unit }) => {
