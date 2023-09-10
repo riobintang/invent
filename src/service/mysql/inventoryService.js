@@ -311,8 +311,7 @@ const getItemsConditionList = async ({ id_work_unit, code_room = null }) => {
 };
 
 const addToInvent = async ({ id_added_item, id_work_unit, quantity }) => {
-
-  await addedItemServices.getItem({id: id_added_item}); 
+  await addedItemServices.getItem({ id: id_added_item });
   const dataQty = await sequelize.query(
     "SELECT ai.id, name_items.name, ai.quantity-COUNT(inventories.id_added_item) AS total, ai.added_date AS year FROM `name_items` JOIN `added_items` ai ON name_items.id = ai.id_name_item LEFT JOIN `inventories` ON ai.id = inventories.id_added_item WHERE ai.id = :id_added_item GROUP BY ai.id;",
     {
@@ -333,7 +332,7 @@ const addToInvent = async ({ id_added_item, id_work_unit, quantity }) => {
     order: [["codeInvent", "DESC"]],
   });
   const qtyLatest = parseInt(countInvent?.codeInvent || 0);
-  
+
   // const { id_name_item } = await addedItemServices.getItem(id_added_item);
   // const countInvent = await sequelize.query(
   //   "SELECT COUNT(inventories.id) AS total FROM name_items JOIN added_items ON name_items.id = added_items.id_name_item JOIN inventories ON inventories.id_added_item = added_items.id WHERE name_items.id = :id_name_item;",
@@ -345,33 +344,37 @@ const addToInvent = async ({ id_added_item, id_work_unit, quantity }) => {
   //   }
   // );
   // const qtyLatest = countInvent[0].total || 0;
-  
+
   if (quantity > dataQty[0]?.total || 0) {
     throw new ResponseError(400, `Max quantity is ${dataQty[0].total}`);
   }
+  await distributionHistoryService.add({
+    id_added_item,
+    id_work_unit,
+    qty: quantity,
+  });
+  // try {
 
-  try {
-    await distributionHistoryService.add({id_added_item, id_work_unit, qty: quantity});
-    for (var x = qtyLatest + 1; x <= quantity + qtyLatest; x++) {
-      await Inventory.create(
-        {
-          codeInvent: x.toString().padStart(3, "0"),
-          id_added_item,
-          id_work_unit,
-        }
-        // {
-        //   transaction: t,
-        // }
-      );
-      // await addItemCondition(insertInvent.id, 1, 1);
-    }
-    // return t.commit();
-    
-    return;
-  } catch (error) {
-    // await t.rollback;
-    return error;
+  for (var x = qtyLatest + 1; x <= quantity + qtyLatest; x++) {
+    await Inventory.create(
+      {
+        codeInvent: x.toString().padStart(3, "0"),
+        id_added_item,
+        id_work_unit,
+      }
+      // {
+      //   transaction: t,
+      // }
+    );
+    // await addItemCondition(insertInvent.id, 1, 1);
   }
+  // return t.commit();
+
+  return;
+  // } catch (error) {
+  //   // await t.rollback;
+  //   return error;
+  // }
 };
 
 const updateStatusItem = async ({ id, id_work_unit, status }) => {

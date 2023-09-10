@@ -34,12 +34,12 @@ const addHistory = async ({ qty, id_added_item, id_work_unit }) => {
     }
   );
   console.log(dataQty);
-  const quantity = dataQty[0] || 0;
+  const total = dataQty[0]?.total || 0;
   // console.log(dataQty[0].total);
-  if (quantity < qty) {
-    throw new ResponseError(400, `Max quantity is ${dataQty.total}`);
+  if (total < qty) {
+    throw new ResponseError(400, `Max quantity is ${total}`);
   }
-
+  console.log(total)
   return await DistributionHistory.create({
     qty,
     id_added_item,
