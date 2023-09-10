@@ -29,7 +29,7 @@ const addHistory = async ({ qty, id_added_item, id_work_unit }) => {
   const dataQty = await sequelize.query(
     "SELECT added_items.id, distributionhistories.id_work_unit, SUM(distributionhistories.qty) AS total FROM added_items JOIN distributionhistories ON added_items.id = distributionhistories.id_added_item WHERE distributionhistories.id_added_item = :id_added_item",
     {
-      replacements: { id_added_item },
+      replacements: { id_added_item: id_added_item },
       type: sequelize.QueryTypes.SELECT,
     }
   );
@@ -39,7 +39,7 @@ const addHistory = async ({ qty, id_added_item, id_work_unit }) => {
   if (total < qty) {
     throw new ResponseError(400, `Max quantity is ${total}`);
   }
-  console.log(total)
+  console.log(total);
   return await DistributionHistory.create({
     qty,
     id_added_item,
