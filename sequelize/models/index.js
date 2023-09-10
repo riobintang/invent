@@ -105,15 +105,6 @@ sequelize.models.Work_unit.hasMany(sequelize.models.Inventory, {
   targetKey: "id",
 });
 
-// InventCondition and Inventory
-sequelize.models.InventCondition.belongsTo(sequelize.models.Inventory, {
-  foreignKey: "id_inventory",
-  sourceKey: "id",
-});
-sequelize.models.Inventory.hasMany(sequelize.models.InventCondition, {
-  foreignKey: "id_inventory",
-  targetKey: "id",
-});
 
 // Status Inventory
 sequelize.models.Inventory.belongsTo(sequelize.models.ConditionItem, {
@@ -136,14 +127,24 @@ sequelize.models.Room.hasMany(sequelize.models.Inventory, {
   sourceKey: "id",
 });
 
-// InventCondition and Condition
-sequelize.models.InventCondition.belongsTo(sequelize.models.ConditionItem, {
-  foreignKey: "id_condition",
+sequelize.models.DistributionHistory.belongsTo(sequelize.models.Added_item, {
+  foreignKey: "id_added_item",
+  targetKey: "id",
+});
+
+sequelize.models.Added_item.hasMany(sequelize.models.DistributionHistory, {
+  foreignKey: "id_added_item",
   sourceKey: "id",
 });
-sequelize.models.ConditionItem.hasMany(sequelize.models.InventCondition, {
-  foreignKey: "id_condition",
+
+sequelize.models.DistributionHistory.belongsTo(sequelize.models.Work_unit, {
+  foreignKey: "id_work_unit",
   targetKey: "id",
+});
+
+sequelize.models.Work_unit.hasMany(sequelize.models.DistributionHistory, {
+  foreignKey: "id_work_unit",
+  sourceKey: "id",
 });
 
 db.sequelize = sequelize;

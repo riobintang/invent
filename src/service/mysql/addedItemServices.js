@@ -47,7 +47,7 @@ const getAllItems = async (year = null) => {
   return result;
 };
 
-const getItem = async (id) => {
+const getItem = async ({id}) => {
   const item = await Added_item.findByPk(id, {
     attributes: {
       exclude: ["createdAt", "updatedAt"],
@@ -55,7 +55,7 @@ const getItem = async (id) => {
   });
 
   if (!item) {
-    throw new ResponseError(400, "Item not found");
+    throw new ResponseError(400, "Added Item not found");
   }
 
   return item;
@@ -68,6 +68,15 @@ const getListUnassignItem = async () => {
       type: sequelize.QueryTypes.SELECT,
     }
   );
+  return data;
+};
+
+
+const getListAssignedItemWorkUnit = async () => {
+  const data = await sequelize.query( "", {
+    type: sequelize.QueryTypes.SELECT,
+  });
+
   return data;
 };
 
@@ -125,6 +134,9 @@ const getListUnassignItem = async () => {
 //     // await t.rollback;
 //   }
 // };
+
+
+
 
 module.exports = {
   addItem,
