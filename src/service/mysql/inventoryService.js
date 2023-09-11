@@ -163,7 +163,7 @@ const getAll = async ({
   });
 
   return items.map((item) => {
-    console.log(item.Added_item);
+    
     return {
       id: item.id,
       codeInvent:

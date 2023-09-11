@@ -25,21 +25,21 @@ const getAll = async () => {
   });
 };
 
-const addHistory = async ({ qty, id_added_item, id_work_unit }) => {
-  const dataQty = await sequelize.query(
-    "SELECT added_items.id, distributionhistories.id_work_unit, SUM(distributionhistories.qty) AS total FROM added_items JOIN distributionhistories ON added_items.id = distributionhistories.id_added_item WHERE distributionhistories.id_added_item = :id_added_item",
-    {
-      replacements: { id_added_item: id_added_item },
-      type: sequelize.QueryTypes.SELECT,
-    }
-  );
-  console.log(dataQty);
-  const total = dataQty[0]?.total || 0;
-  // console.log(dataQty[0].total);
-  if (total < qty) {
-    throw new ResponseError(400, `Max quantity is ${total}`);
-  }
-  console.log(total);
+const addHistory = async ({ qty, id_added_item, id_work_unit, quantityAddedItem, }) => {
+  // const dataQty = await sequelize.query(
+  //   "SELECT added_items.id, distributionhistories.id_work_unit, SUM(distributionhistories.qty) AS total FROM added_items JOIN distributionhistories ON added_items.id = distributionhistories.id_added_item WHERE distributionhistories.id_added_item = :id_added_item GROUP BY distributionhistories.id_work_unit, distributionhistories.id_work_unit;",
+  //   {
+  //     replacements: { id_added_item: id_added_item },
+  //     type: sequelize.QueryTypes.SELECT,
+  //   }
+  // );
+  // console.log(dataQty);
+  // const total = dataQty[0]?.total || quantityAddedItem;
+  // // console.log(dataQty[0].total);
+  // if (total < qty) {
+  //   throw new ResponseError(400, `Max quantity is ${total}`);
+  // }
+  // console.log(total);
   return await DistributionHistory.create({
     qty,
     id_added_item,
