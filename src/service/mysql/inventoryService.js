@@ -163,7 +163,6 @@ const getAll = async ({
   });
 
   return items.map((item) => {
-    
     return {
       id: item.id,
       codeInvent:
@@ -240,22 +239,50 @@ const assignItemToRoom = async ({
   }
 
   // return 0;
-  for (var x = 0; x < quantity; x++) {
-    const value = await Inventory.findOne({
-      where: {
-        id_added_item,
-        id_work_unit,
-        status: 1,
-        id_room: {
-          [Op.is]: null,
-        },
-      },
-    });
+  // for (var x = 0; x < quantity; x++) {
+  //   const value = await Inventory.findOne({
+  //     where: {
+  //       id_added_item,
+  //       id_work_unit,
+  //       status: 1,
+  //       id_room: {
+  //         [Op.is]: null,
+  //       },
+  //     },
+  //   });
 
-    await value.update({
+  //   await value.update({
+  //     id_room: room.id,
+  //   });
+  // }
+  const getIdInventory = await Inventory.findAll({
+    where: {
+      id_added_item,
+      id_work_unit,
+      status: 1,
+      id_room: {
+        [Op.is]: null,
+      },
+    },
+    limit: quantity,
+  });
+
+  const arrIdInventory = getIdInventory.map((item) => {
+    return item.id;
+  });
+
+  await Inventory.update(
+    {
       id_room: room.id,
-    });
-  }
+      dateAssign: new Date(),
+    },
+    {
+      where: {
+        id: arrIdInventory,
+      },
+    }
+  );
+
   return;
 };
 

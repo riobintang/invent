@@ -53,6 +53,10 @@ function createModelInventory(sequelize, DataTypes) {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      dateAssign: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
