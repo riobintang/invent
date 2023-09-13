@@ -19,9 +19,10 @@ const router = require("express").Router();
 router.get("/", authToken, handlerGetAllInventoryByWorkUnit);
 router.get("/assigned", authToken, handlerGetConditionItems);
 router.get("/list", authToken, handlerGetItemsByRoom);
+router.get("/all", authToken, authAdmin, handlerAllItems);
 router.get("/:code_room", authToken, handlerGetHistoryAssignedToRoom);
 // router.get("/notassigned", authToken, authAdmin, handlerGetAllUnsignedItems);
-router.get("/all", authToken, authAdmin, handlerAllItems);
+
 
 router.post("/", authToken, authAdmin, handlerAddInventory);
 router.post("/assign", authToken, handlerAssignItemToRoom);
