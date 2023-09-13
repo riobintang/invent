@@ -317,12 +317,25 @@ const getItemsListByWorkUnit = async ({ id_work_unit }) => {
 const getItemsConditionList = async ({ id_work_unit, code_room = null }) => {
   var room_rule = "";
   if (code_room) {
-    const { id } = await roomService.checkRoom({
-      code: code_room,
-      id_work_unit,
+    // const { id } = await roomService.checkRoom({
+    //   code: code_room,
+    //   id_work_unit,
+    // });
+    const getId = await Room.findOne({
+      where: {
+        code: code_room,
+      },
     });
-    room_rule = `AND inventories.id_room = ${id}`;
+
+   
+    if (!getId) {
+      return [];
+    } else {
+      room_rule = `AND inventories.id_room = ${getId.id}`;
+    }
   }
+  
+
   const data = await sequelize.query(
     "SELECT name_items.name, COUNT(CASE WHEN inventories.status = 1 THEN 1 ELSE null END) AS baik, COUNT(CASE WHEN inventories.status = 2 THEN 1 ELSE null END) AS buruk, COUNT(inventories.id_added_item) AS total, ai.added_date AS date FROM name_items JOIN `added_items` ai ON name_items.id = ai.id_name_item LEFT JOIN `inventories` ON ai.id = inventories.id_added_item WHERE inventories.id_work_unit = :id_work_unit " +
       room_rule +
@@ -423,6 +436,16 @@ const updateStatusItem = async ({ id, id_work_unit, status }) => {
   });
 };
 
+const getHistoryDistributedRoom = async ({ id_work_unit, code_room }) => {
+  return await sequelize.query(
+    "SELECT name_items.name, rooms.code, rooms.name, COUNT(inventories.id) as total, inventories.dateAssign FROM name_items JOIN added_items ON name_items.id = added_items.id_name_item JOIN inventories ON inventories.id_added_item = added_items.id JOIN rooms ON inventories.id_room = rooms.id WHERE inventories.id_work_unit = :id_work_unit AND rooms.code = :code_room GROUP BY inventories.id_added_item, inventories.dateAssign;",
+    {
+      replacements: { id_work_unit: id_work_unit, code_room: code_room },
+      type: sequelize.QueryTypes.SELECT,
+    }
+  );
+};
+
 module.exports = {
   getAllInventoryAddedWorkUnit: getAll,
   // addInventory: add,
@@ -435,4 +458,5 @@ module.exports = {
   getItemsConditionList,
   addToInvent,
   updateStatusItem,
+  getHistoryDistributedRoom,
 };

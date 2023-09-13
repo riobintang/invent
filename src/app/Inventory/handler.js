@@ -109,9 +109,17 @@ module.exports = {
       const { uuid } = req.user;
       // const { id } = req.params;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
-      const { code, id_added_item, quantity } = validation(addItemToRoom, req.body);
+      const { code, id_added_item, quantity } = validation(
+        addItemToRoom,
+        req.body
+      );
       // console.log(id);
-      await inventoryService.assignItemToRoom({ id_added_item, quantity, code, id_work_unit });
+      await inventoryService.assignItemToRoom({
+        id_added_item,
+        quantity,
+        code,
+        id_work_unit,
+      });
 
       res.status(200).json({
         status: "success",
@@ -126,7 +134,7 @@ module.exports = {
       const { uuid } = req.user;
       const { code_room } = req.query;
       const { id_work_unit } = await userService.getUserByUUID(uuid);
- 
+
       const data = await inventoryService.getAllInventoryAddedWorkUnit({
         id_work_unit,
         code_room,
@@ -168,11 +176,29 @@ module.exports = {
       const requestData = validation(updateStatusItem, req.body);
       requestData.id = id;
       requestData.id_work_unit = id_work_unit;
-      console.log(requestData)
+      console.log(requestData);
       await inventoryService.updateStatusItem(requestData);
       res.status(200).json({
         status: "success",
         message: "successfully update status Item",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  handlerGetHistoryAssignedToRoom: async (req, res, next) => {
+    try {
+      const { uuid } = req.user;
+      const { code_room } = req.params;
+      const { id_work_unit } = await userService.getUserByUUID(uuid);
+      const data = await inventoryService.getHistoryDistributedRoom({
+        id_work_unit,
+        code_room,
+      });
+      res.status(200).json({
+        status: "success",
+        message: "successfully get History Distribution Room",
+        data,
       });
     } catch (error) {
       next(error);
