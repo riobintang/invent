@@ -439,7 +439,7 @@ const updateStatusItem = async ({ id, id_work_unit, status }) => {
 
 const getHistoryDistributedRoom = async ({ id_work_unit, code_room }) => {
   return await sequelize.query(
-    "SELECT name_items.name, rooms.code, rooms.name, COUNT(inventories.id) as total, inventories.dateAssign FROM name_items JOIN added_items ON name_items.id = added_items.id_name_item JOIN inventories ON inventories.id_added_item = added_items.id JOIN rooms ON inventories.id_room = rooms.id WHERE inventories.id_work_unit = :id_work_unit AND rooms.code = :code_room GROUP BY inventories.id_added_item, inventories.dateAssign;",
+    "SELECT name_items.name, rooms.name, COUNT(inventories.id) as total, inventories.dateAssign FROM name_items JOIN added_items ON name_items.id = added_items.id_name_item JOIN inventories ON inventories.id_added_item = added_items.id JOIN rooms ON inventories.id_room = rooms.id WHERE inventories.id_work_unit = :id_work_unit AND rooms.code = :code_room GROUP BY inventories.id_added_item, inventories.dateAssign;",
     {
       replacements: { id_work_unit: id_work_unit, code_room: code_room },
       type: sequelize.QueryTypes.SELECT,
