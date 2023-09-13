@@ -324,6 +324,7 @@ const getItemsConditionList = async ({ id_work_unit, code_room = null }) => {
     const getId = await Room.findOne({
       where: {
         code: code_room,
+        id_work_unit
       },
     });
 
